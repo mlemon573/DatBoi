@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
@@ -95,6 +97,8 @@ public class Whiteboard extends JFrame
       menuFileOpen.addActionListener(e -> openFile());
       menuFileNew.addActionListener(e -> clearCanvas());
       removeShapeButton.addActionListener(e -> canvas.removeSelected());
+
+      canvas.addMouseListener(new CanvasListener());
    }
 
    private void clearCanvas()
@@ -309,4 +313,33 @@ public class Whiteboard extends JFrame
 
    /** @noinspection ALL */
    public JComponent $$$getRootComponent$$$() { return whiteboardPanel; }
+
+   private class CanvasListener extends MouseAdapter
+   {
+      @Override
+      public void mouseClicked(MouseEvent e)
+      {
+         super.mouseClicked(e);
+         DShape shape = canvas.findShape(e.getX(), e.getY());
+         canvas.setSelected(shape);
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e)
+      {
+         super.mousePressed(e);
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e)
+      {
+         super.mouseReleased(e);
+      }
+
+      @Override
+      public void mouseDragged(MouseEvent e)
+      {
+         super.mouseDragged(e);
+      }
+   }
 }

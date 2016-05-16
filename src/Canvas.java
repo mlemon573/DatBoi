@@ -66,15 +66,17 @@ public class Canvas extends JPanel implements ModelListener
       return shapes;
    }
 
-   public DShape findShape(int x, int y) {
-		for (int i = shapes.size() - 1; i >= 0; i--) {
-			if (shapes.get(i).getX() == x && shapes.get(i).getY() == y) {
-			   selected = shapes.get(i);
-				return shapes.get(i);
-			}
-		}
-		return null;
-	}
+   public DShape findShape(int x, int y)
+   {
+      for (int i = shapes.size() - 1; i >= 0; i--)
+      {
+         DShape shape = shapes.get(i);
+         if (x >= shape.getX() && x <= shape.getX() + shape.getWidth()
+               && y >= shape.getY() && y <= shape.getY() + shape.getHeight())
+         {return shapes.get(i);}
+      }
+      return null;
+   }
 
    public void moveShape(DShape shape, int newX, int newY)
    {
