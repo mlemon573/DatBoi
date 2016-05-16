@@ -4,20 +4,37 @@ import java.awt.*;
 public class ColorChooser
 {
    private JPanel colorPanel;
+   private JColorChooser colorChooser;
+   private JButton confirmButton;
+   private JButton cancelButton;
 
-   private ColorChooser()
+   private DShape selectedShape;
+
+   private ColorChooser(DShape selectedShape)
    {
-
+      this.selectedShape = selectedShape;
+      confirmButton.addActionListener(e -> saveColor());
+      cancelButton.addActionListener(e -> close(colorPanel));
    }
 
-   public static void createFrame()
+   public static void createFrame(DShape selectedShape)
    {
       JFrame frame = new JFrame();
-      frame.setContentPane(new ColorChooser().colorPanel);
+      frame.setContentPane(new ColorChooser(selectedShape).colorPanel);
       frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       frame.pack();
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);
+   }
+
+   private void saveColor()
+   {
+      selectedShape.getShapeModel().setColor(colorChooser.getColor());
+   }
+
+   private void close(JPanel child)
+   {
+      SwingUtilities.getWindowAncestor(child).dispose();
    }
 
    {
@@ -35,9 +52,32 @@ public class ColorChooser
    private void $$$setupUI$$$()
    {
       colorPanel = new JPanel();
-      colorPanel.setLayout(new BorderLayout(0, 0));
-      final JColorChooser colorChooser1 = new JColorChooser();
-      colorPanel.add(colorChooser1, BorderLayout.CENTER);
+      colorPanel.setLayout(new GridBagLayout());
+      colorChooser = new JColorChooser();
+      GridBagConstraints gbc;
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      colorPanel.add(colorChooser, gbc);
+      final JPanel panel1 = new JPanel();
+      panel1.setLayout(new GridBagLayout());
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      gbc.fill = GridBagConstraints.BOTH;
+      colorPanel.add(panel1, gbc);
+      confirmButton = new JButton();
+      confirmButton.setText("Confirm");
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      panel1.add(confirmButton, gbc);
+      cancelButton = new JButton();
+      cancelButton.setText("Cancel");
+      gbc = new GridBagConstraints();
+      gbc.gridx = 1;
+      gbc.gridy = 0;
+      panel1.add(cancelButton, gbc);
    }
 
    /** @noinspection ALL */

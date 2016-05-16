@@ -19,7 +19,7 @@ public class Whiteboard extends JFrame
 
    private Whiteboard()
    {
-      setColorButton.addActionListener(e -> ColorChooser.createFrame());
+      setColorButton.addActionListener(e -> ColorChooser.createFrame(selectedShape));
    }
 
    public static void main(String[] args)
