@@ -1,13 +1,15 @@
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
 import java.util.List;
+import java.awt.*;
+import javax.swing.*;
 
 public class Canvas extends JPanel implements ModelListener {
 	private List<DShape> shapes;
 	private DShape selected;
 	private int selectedX;
 	private int selectedY;
+	private int id;
 
 	public Canvas() {
 		this(400, 400);
@@ -17,14 +19,24 @@ public class Canvas extends JPanel implements ModelListener {
 		this.setPreferredSize(new Dimension(width, height));
 		this.setOpaque(true);
 		this.setBackground(Color.white);
-		shapes = new ArrayList<>();
+		shapes = new ArrayList<DShape>();
+		id = 1;
 	}
-	
+
 	public void addShape(DShape shape) {
+		shape.setID(id++);
 		shapes.add(shape);
-		shape.addListener(this);
 		selected = shape;
-      repaint();
+		repaint();
+	}
+
+	public void removeSelected() {
+		if (shapes.contains(selected)) {
+			shapes.remove(selected);
+			id--;
+			selected = null;
+			repaint();
+		}
 	}
 
 	public void clear() {
@@ -40,6 +52,10 @@ public class Canvas extends JPanel implements ModelListener {
 	public DShape getSelected() {
 		return this.selected;
 	}
+	
+	public List<DShape> getShapesList() {
+		return shapes;
+	}
 
 	public DShape findShape(int x, int y) {
 		return null;
@@ -49,6 +65,11 @@ public class Canvas extends JPanel implements ModelListener {
 
 	}
 
+	@Override
+	public void modelChanged(DShapeModel model) {
+		repaint();
+	}
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for (DShape shape : shapes) {
@@ -56,9 +77,11 @@ public class Canvas extends JPanel implements ModelListener {
 		}
 	}
 
-	@Override
-	public void modelChanged(DShapeModel model)
-	{
-		repaint();
+	public static void main(String... args) {
+		JFrame a = new JFrame();
+		Canvas b = new Canvas();
+		a.add(b);
+		a.pack();
+		a.setVisible(true);
 	}
 }
