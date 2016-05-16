@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,11 @@ public class Canvas extends JPanel
    }
 
    public void moveShape(DShape shape, int newX, int newY)
+   {
+
+   }
+
+   public void saveAsPng(File fileToSave)
    {
 
    }

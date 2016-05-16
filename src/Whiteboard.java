@@ -6,10 +6,11 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+//DOUBLE CHEESEBURGER WITH NO LETTUCE NO SEEDS ON THE BUN
 public class Whiteboard extends JFrame
 {
    private static JFileChooser fileChooser;
-   //GUI elements
+   //gui elements
    private JPanel whiteboardPanel;
    private JButton rectButton;
    private JButton ovalButton;
@@ -107,7 +108,7 @@ public class Whiteboard extends JFrame
       if (saveState == JFileChooser.APPROVE_OPTION)
       {
          File fileToSave = fileChooser.getSelectedFile();
-         //canvas.save(fileToSave);
+         canvas.saveAsPng(fileToSave);
 
          String desiredSaveLocation = fileToSave.getAbsolutePath();
          int canvasWidth = canvas.getSize().width;
