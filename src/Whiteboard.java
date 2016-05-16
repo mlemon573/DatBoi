@@ -4,7 +4,11 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class Whiteboard extends JFrame
 {
@@ -170,6 +174,30 @@ public class Whiteboard extends JFrame
          fileChooser.setEnabled(false);
       }
    }
+   
+   private void saveXml() {
+		fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Save As...");
+		saveState = fileChooser.showSaveDialog(null);
+
+		if (saveState == JFileChooser.APPROVE_OPTION) {
+			File fileToSave = fileChooser.getSelectedFile();
+			String desiredSaveLocation = fileToSave.getAbsolutePath();
+			try {
+				XMLEncoder xmlOut = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(desiredSaveLocation + ".xml")));
+				DShape[] shapes = canvas.getShapesList().toArray(new DShape[0]);
+				DShapeModel[] shapeModels = new DShapeModel[shapes.length];
+				for (int i = 0; i < shapes.length; i++) {
+					shapeModels[i] = shapes[i].getModel();
+				}
+				xmlOut.writeObject(shapeModels);
+				xmlOut.close();
+			} catch (Exception ex) {
+				System.out.println("File cannot be saved.");
+			}
+			fileChooser.setEnabled(false);
+		}
+	}
 
    private void setSelectedColor()
    {
