@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -8,8 +10,7 @@ import java.io.File;
 
 public class Whiteboard extends JFrame
 {
-   private static JFileChooser fileChooser;
-   //gui elements
+   //GUI elements
    private JPanel whiteboardPanel;
    private JButton rectButton;
    private JButton ovalButton;
@@ -31,6 +32,8 @@ public class Whiteboard extends JFrame
    private JMenuItem menuFileSavePng;
    private JMenuItem menuFileSaveXml;
    private JMenuItem menuFileExit;
+   private static JFileChooser	fileChooser;
+   private int saveState;
    //instance variables
    private DShape selectedShape;
    private int saveState;
@@ -65,12 +68,10 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
-            .CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
       menuFileSave.setMnemonic('s');
@@ -78,16 +79,14 @@ public class Whiteboard extends JFrame
       menuFileSavePng.setMnemonic('p');
       menuFileSaveXml = new JMenuItem("XML");
       menuFileSaveXml.setMnemonic('x');
+      menuFileSave.add(menuFileSavePng);
+      menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
-            .CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
       menuFileExit.setMnemonic('e');
-
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
       menuFile.addSeparator();
-      menuFileSave.add(menuFileSavePng);
-      menuFileSave.add(menuFileSaveXml);
       menuFile.add(menuFileSave);
       menuFile.addSeparator();
       menuFile.add(menuFileExit);
@@ -132,7 +131,6 @@ public class Whiteboard extends JFrame
     * >>> IMPORTANT!! <<<
     * DO NOT edit this method OR call it in your code!
     */
-
    private void $$$setupUI$$$()
    {
       whiteboardPanel = new JPanel();
