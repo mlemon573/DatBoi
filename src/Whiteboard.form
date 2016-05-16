@@ -9,7 +9,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="c78cf" class="Canvas" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="c78cf" class="Canvas" binding="canvas" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties>
           <preferredSize width="400" height="400"/>
