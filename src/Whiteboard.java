@@ -15,6 +15,13 @@ public class Whiteboard extends JFrame
    private JButton moveToBackButton;
    private JButton removeShapeButton;
 
+   private DShape selectedShape;
+
+   private Whiteboard()
+   {
+      setColorButton.addActionListener(e -> ColorChooser.createFrame());
+   }
+
    public static void main(String[] args)
    {
       Whiteboard whiteboard = new Whiteboard();
