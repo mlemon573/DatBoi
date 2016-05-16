@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,22 +48,10 @@ public class Canvas extends JPanel {
 
 	}
 
-	public void saveAsPng(File fileToSave) {
-
-	}
-
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for (DShape shape : shapes) {
 			shape.draw(g);
 		}
-	}
-
-	public static void main(String... args) {
-		JFrame a = new JFrame();
-		Canvas b = new Canvas();
-		a.add(b);
-		a.pack();
-		a.setVisible(true);
 	}
 }

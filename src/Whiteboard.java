@@ -99,8 +99,6 @@ public class Whiteboard extends JFrame
       if (saveState == JFileChooser.APPROVE_OPTION)
       {
          File fileToSave = fileChooser.getSelectedFile();
-         canvas.saveAsPng(fileToSave);
-
          String desiredSaveLocation = fileToSave.getAbsolutePath();
          int canvasWidth = canvas.getSize().width;
          int canvasHeight = canvas.getSize().height;
@@ -114,7 +112,6 @@ public class Whiteboard extends JFrame
             ImageIO.write(image, "png", imageFile);
          }
          catch (Exception ex) {System.out.println("File cannot be saved");}
-
          fileChooser.setEnabled(false);
       }
    }
