@@ -29,7 +29,8 @@ public class ColorChooser
 
    private void saveColor()
    {
-      selectedShape.getShapeModel().setColor(colorChooser.getColor());
+      selectedShape.getModel().setColor(colorChooser.getColor());
+      close(colorPanel);
    }
 
    private void close(JPanel child)

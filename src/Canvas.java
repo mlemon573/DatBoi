@@ -1,7 +1,8 @@
-import java.util.*;
-import java.util.List;
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Canvas extends JPanel {
 	private List<DShape> shapes;
@@ -17,12 +18,13 @@ public class Canvas extends JPanel {
 		this.setPreferredSize(new Dimension(width, height));
 		this.setOpaque(true);
 		this.setBackground(Color.white);
-		shapes = new ArrayList<DShape>();
+		shapes = new ArrayList<>();
 	}
 	
 	public void addShape(DShape shape) {
 		shapes.add(shape);
 		selected = shape;
+      repaint();
 	}
 
 	public void clear() {
@@ -47,7 +49,7 @@ public class Canvas extends JPanel {
 
 	}
 
-	public void saveAsPNG(File fileToSave) {
+	public void saveAsPng(File fileToSave) {
 
 	}
 
