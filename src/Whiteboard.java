@@ -14,7 +14,7 @@ import java.io.FileOutputStream;
 public class Whiteboard extends JFrame
 {
    private static JFileChooser fileChooser;
-   //gui elements
+   //GUI elements
    private JPanel whiteboardPanel;
    private JButton rectButton;
    private JButton ovalButton;
@@ -148,6 +148,8 @@ public class Whiteboard extends JFrame
 
    private void savePng()
    {
+      canvas.setSelected(null);
+      canvas.repaint();
       fileChooser = new JFileChooser();
       fileChooser.setDialogTitle("Save As...");
       saveState = fileChooser.showSaveDialog(null);
@@ -343,5 +345,6 @@ public class Whiteboard extends JFrame
       {
          super.mouseDragged(e);
       }
+
    }
 }
