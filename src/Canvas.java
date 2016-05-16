@@ -59,6 +59,34 @@ public class Canvas extends JPanel implements ModelListener
    public void setSelected(DShape shape)
    {
       selected = shape;
+      repaint();
+   }
+
+   public int getSelectedIndex()
+   {
+      for (int i = 0; i < shapes.size(); i++)
+      {
+         if (shapes.get(i).equals(selected)) {return i;}
+      }
+      return -1;
+   }
+
+   public void moveToFront()
+   {
+      int i = getSelectedIndex();
+      if (i == -1) {return;}
+      DShape shape = shapes.remove(i);
+      shapes.add(shape);
+      repaint();
+   }
+
+   public void moveToBack()
+   {
+      int i = getSelectedIndex();
+      if (i == -1) {return;}
+      DShape shape = shapes.remove(i);
+      shapes.add(0, shape);
+      repaint();
    }
 
    public List<DShape> getShapesList()
@@ -107,8 +135,8 @@ public class Canvas extends JPanel implements ModelListener
          List<Point> knobs = selected.getKnobs();
          for (Point p : knobs)
          {
-            int x = (int) p.getX() - squareWidth / 2;
-            int y = (int) p.getY() - squareWidth / 2;
+            int x = (int) (p.getX() - squareWidth / 2) - 1;
+            int y = (int) (p.getY() - squareWidth / 2);
             g.setColor(Color.WHITE);
             g.fillRect(x, y, squareWidth, squareWidth);
             g.setColor(Color.BLACK);

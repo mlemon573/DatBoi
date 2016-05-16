@@ -96,6 +96,8 @@ public class Whiteboard extends JFrame
       rectButton.addActionListener(e -> addRect());
       menuFileOpen.addActionListener(e -> openFile());
       menuFileNew.addActionListener(e -> clearCanvas());
+      moveToFrontButton.addActionListener(e -> canvas.moveToFront());
+      moveToBackButton.addActionListener(e -> canvas.moveToBack());
       removeShapeButton.addActionListener(e -> canvas.removeSelected());
 
       canvas.addMouseListener(new CanvasListener());

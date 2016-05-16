@@ -83,7 +83,7 @@ public abstract class DShape
 
    public boolean equals(DShape shape)
    {
-      return this.model.equals(shape.getModel());
+      return shape != null && this.model.equals(shape.getModel());
    }
 
    public DShapeModel getModel()
