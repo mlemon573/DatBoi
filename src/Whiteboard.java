@@ -40,16 +40,30 @@ public class Whiteboard extends JFrame
    private void buildMenu()
    {
       JMenu menuFile = new JMenu("File");
+      menuFile.setMnemonic('f');
       JMenuItem menuFileNew = new JMenuItem("New");
       menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+      menuFileNew.setMnemonic('n');
       JMenuItem menuFileOpen = new JMenuItem("Open");
       menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-      JMenuItem menuFileSave = new JMenuItem("Save");
-      menuFileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+      menuFileOpen.setMnemonic('o');
+      JMenu menuFileSave = new JMenu("Save");
+      menuFileSave.setMnemonic('s');
+      JMenuItem menuFileSavePng = new JMenuItem("PNG");
+      menuFileSavePng.setMnemonic('p');
+      JMenuItem menuFileSaveXml = new JMenuItem("XML");
+      menuFileSaveXml.setMnemonic('x');
+      menuFileSave.add(menuFileSavePng);
+      menuFileSave.add(menuFileSaveXml);
+      JMenuItem menuFileExit = new JMenuItem("Exit");
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+      menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
       menuFile.addSeparator();
       menuFile.add(menuFileSave);
+      menuFile.addSeparator();
+      menuFile.add(menuFileExit);
       menuBar.add(menuFile);
    }
 
