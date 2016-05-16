@@ -104,7 +104,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="20e5c" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+              <grid id="20e5c" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
@@ -136,6 +136,10 @@
           </grid>
         </children>
       </grid>
+      <component id="949ff" class="javax.swing.JMenuBar" binding="menuBar">
+        <constraints border-constraint="North"/>
+        <properties/>
+      </component>
     </children>
   </grid>
 </form>

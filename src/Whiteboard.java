@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 public class Whiteboard extends JFrame
 {
@@ -14,11 +16,13 @@ public class Whiteboard extends JFrame
    private JButton moveToFrontButton;
    private JButton moveToBackButton;
    private JButton removeShapeButton;
+   private JMenuBar menuBar;
 
    private DShape selectedShape;
 
    private Whiteboard()
    {
+      buildMenu();
       setColorButton.addActionListener(e -> ColorChooser.createFrame(selectedShape));
    }
 
@@ -31,6 +35,22 @@ public class Whiteboard extends JFrame
       whiteboard.pack();
       whiteboard.setLocationRelativeTo(null);
       whiteboard.setVisible(true);
+   }
+
+   private void buildMenu()
+   {
+      JMenu menuFile = new JMenu("File");
+      JMenuItem menuFileNew = new JMenuItem("New");
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+      JMenuItem menuFileOpen = new JMenuItem("Open");
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+      JMenuItem menuFileSave = new JMenuItem("Save");
+      menuFileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+      menuFile.add(menuFileNew);
+      menuFile.add(menuFileOpen);
+      menuFile.addSeparator();
+      menuFile.add(menuFileSave);
+      menuBar.add(menuFile);
    }
 
    {
@@ -107,7 +127,7 @@ public class Whiteboard extends JFrame
       fontBox = new JComboBox();
       panel5.add(fontBox);
       final JPanel panel6 = new JPanel();
-      panel6.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+      panel6.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
       gbc = new GridBagConstraints();
       gbc.gridx = 0;
       gbc.gridy = 3;
@@ -122,6 +142,8 @@ public class Whiteboard extends JFrame
       removeShapeButton = new JButton();
       removeShapeButton.setText("Remove Shape");
       panel6.add(removeShapeButton);
+      menuBar = new JMenuBar();
+      whiteboardPanel.add(menuBar, BorderLayout.NORTH);
    }
 
    /** @noinspection ALL */
