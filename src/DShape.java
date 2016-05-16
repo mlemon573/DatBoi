@@ -1,71 +1,131 @@
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public abstract class DShape
-{
-   private DShapeModel shapeModel;
+public abstract class DShape {
+	private DShapeModel model;
 
-   DShape()
-   {
-      shapeModel = new DShapeModel();
-   }
+	public DShape() {
 
-   DShape(int x, int y, int width, int height)
-   {
-      shapeModel = new DShapeModel(x, y, width, height);
-   }
+	}
 
-   DShape(int x, int y, int width, int height, Color color)
-   {
-      shapeModel = new DShapeModel(x, y, width, height, color);
-   }
+	public void setX(int x) {
+		model.setX(x);
+	}
 
-   public DShapeModel getShapeModel()
-   {
-      return shapeModel;
-   }
+	public int getX() {
+		return model.getX();
+	}
 
-   public void setShapeModel(DShapeModel shapeModel)
-   {
-      this.shapeModel = shapeModel;
-   }
+	public void setY(int y) {
+		model.setY(y);
+	}
 
-   abstract void draw(Graphics g);
+	public int getY() {
+		return model.getY();
+	}
 
-   protected Rectangle getBounds()
-   {
-      return shapeModel.getBounds();
-   }
+	public void setWidth(int width) {
+		model.setWidth(width);
+	}
 
-   protected List<Point> getKnobs()
-   {
-      Rectangle r = shapeModel.getBounds();
-      List<Point> knobs = new ArrayList<>();
-      knobs.add(new Point((int) (r.getX()), (int) (r.getY())));
-      knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) r.getY()));
-      knobs.add(new Point((int) (r.getX()), (int) (r.getY() + r.getHeight())));
-      knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) (r.getY()
-            + r.getHeight())));
-      return knobs;
-   }
+	public int getWidth() {
+		return model.getWidth();
+	}
+
+	public void setHeight(int height) {
+		model.setHeight(height);
+	}
+
+	public int getHeight() {
+		return model.getHeight();
+	}
+
+	public void setColor(Color color) {
+		model.setColor(color);
+	}
+
+	public Color getColor() {
+		return model.getColor();
+	}
+
+	public void setID(int id) {
+		model.setID(id);
+	}
+
+	public int getID() {
+		return model.getID();
+	}
+
+	public void setBounds(int x, int y, int width, int height) {
+		model.setBounds(x, y, width, height);
+	}
+
+	public Rectangle getBounds() {
+		return model.getBounds();
+	}
+
+	public boolean equals(DShape shape) {
+		return this.model.equals(shape.getModel());
+	}
+
+	public void setModel(DShapeModel model) {
+		this.model = model;
+	}
+
+	public DShapeModel getModel() {
+		return this.model;
+	}
+
+	abstract void draw(Graphics g);
+
+	protected List<Point> getKnobs() {
+		Rectangle r = model.getBounds();
+		List<Point> knobs = new ArrayList<Point>();
+		knobs.add(new Point((int) (r.getX()), (int) (r.getY())));
+		knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) r.getY()));
+		knobs.add(new Point((int) (r.getX()), (int) (r.getY() + r.getHeight())));
+		knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) (r.getY() + r.getHeight())));
+		return knobs;
+	}
 }
 
-class DRect extends DShape
-{
-   public DRect()
-   {
-      super.setShapeModel(new DRectModel());
-   }
+class DRect extends DShape {
+	public DRect() {
+		super.setModel(new DRectModel());
+	}
 
-   public void draw(Graphics g)
-   {
-      g.setColor(getShapeModel().getColor());
-      Rectangle r = getBounds();
-      int x = (int) r.getX();
-      int y = (int) r.getY();
-      int width = (int) r.getWidth();
-      int height = (int) r.getHeight();
-      g.drawRect(x, y, width, height);
-   }
+	public void draw(Graphics g) {
+		g.setColor(this.getColor());
+	}
+}
+
+class DOval extends DShape {
+	public DOval() {
+		super.setModel(new DOvalModel());
+	}
+
+	public void draw(Graphics g) {
+
+	}
+}
+
+class DLine extends DShape {
+	public DLine() {
+		super.setModel(new DLineModel());
+	}
+
+	public void draw(Graphics g) {
+
+	}
+}
+
+class DText extends DShape {
+	public DText() {
+		super.setModel(new DLineModel());
+	}
+
+	public void draw(Graphics g) {
+
+	}
 }
