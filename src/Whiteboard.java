@@ -90,6 +90,7 @@ public class Whiteboard extends JFrame
    {
       setColorButton.addActionListener(e -> setSelectedColor());
       menuFileSavePng.addActionListener(e -> savePng());
+      menuFileSaveXml.addActionListener(e -> saveXml());
       rectButton.addActionListener(e -> addRect());
       menuFileOpen.addActionListener(e -> openFile());
       menuFileNew.addActionListener(e -> clearCanvas());
@@ -178,8 +179,7 @@ public class Whiteboard extends JFrame
          try
          {
             XMLEncoder xmlOut =
-                  new XMLEncoder(new BufferedOutputStream(new FileOutputStream(
-                        desiredSaveLocation + ".xml")));
+                  new XMLEncoder(new BufferedOutputStream(new FileOutputStream(fileToSave)));
             DShape[] shapes = canvas.getShapesList().toArray(new DShape[0]);
             DShapeModel[] shapeModels = new DShapeModel[shapes.length];
             for (int i = 0; i < shapes.length; i++)
