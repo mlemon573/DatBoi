@@ -137,12 +137,11 @@ public class DShapeModel
 
    public boolean equals(DShapeModel model)
    {
-      if (id == model.getID() && getClass().equals(model.getClass()))
+      if (id == model.getID() && getClass().equals(model.getClass())
+            && this.getBounds().equals(model.getBounds())
+            && color.equals(model.getColor()))
       {
-         if (this.getBounds().equals(model.getBounds()) && color.equals(model.getColor()))
-         {
-            return true;
-         }
+         return true;
       }
       return false;
    }

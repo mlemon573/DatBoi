@@ -92,6 +92,28 @@ public class Canvas extends JPanel implements ModelListener
    public void paintComponent(Graphics g)
    {
       super.paintComponent(g);
-      for (DShape shape : shapes) {shape.draw(g);}
+      for (DShape shape : shapes)
+      {
+         shape.draw(g);
+         if (shape.equals(selected)) {drawKnobs(g);}
+      }
+   }
+
+   public void drawKnobs(Graphics g)
+   {
+      int squareWidth = 10;
+      if (selected != null)
+      {
+         List<Point> knobs = selected.getKnobs();
+         for (Point p : knobs)
+         {
+            int x = (int) p.getX() - squareWidth / 2;
+            int y = (int) p.getY() - squareWidth / 2;
+            g.setColor(Color.WHITE);
+            g.fillRect(x, y, squareWidth, squareWidth);
+            g.setColor(Color.BLACK);
+            g.drawRect(x, y, squareWidth, squareWidth);
+         }
+      }
    }
 }
