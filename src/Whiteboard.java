@@ -97,8 +97,50 @@ public class Whiteboard extends JFrame
       setColorButton.addActionListener(e -> setSelectedColor());
       menuFileSavePng.addActionListener(e -> savePng());
       rectButton.addActionListener(e -> addRect());
+      menuFileOpen.addActionListener(e -> openFile());
+      menuFileNew.addActionListener(e -> clearCanvas());
    }
 
+ private void clearCanvas() {
+      JFrame ensureOption = new JFrame("Clear Screen");
+      Box labelBox = new Box(BoxLayout.Y_AXIS);
+      Box buttonsBox = new Box(BoxLayout.X_AXIS);
+      JLabel warning = new JLabel("Do you want to clear the canvas? Your work will be deleted.");
+      JButton yesButton = new JButton("Yes");
+      JButton noButton = new JButton("No");
+      buttonsBox.add(yesButton);
+      buttonsBox.add(noButton);
+      labelBox.add(warning);
+      labelBox.add(buttonsBox);
+      for(Component comp : labelBox.getComponents())
+      {
+         ((JComponent)comp).setAlignmentX(Box.CENTER_ALIGNMENT);
+      }
+      ensureOption.add(labelBox);
+      ensureOption.pack();
+      ensureOption.setLocationRelativeTo(null);
+      ensureOption.setVisible(true);
+
+      yesButton.addActionListener(new ActionListener() {
+
+         public void actionPerformed(ActionEvent e) {
+            canvas.clear();
+            canvas.repaint();
+            ensureOption.dispose();
+         }
+      });
+   }
+
+   private void openFile() {
+            fileChooser = new JFileChooser();
+            openState = fileChooser.showOpenDialog(null);
+            if(openState == JFileChooser.APPROVE_OPTION) {
+               File file = fileChooser.getSelectedFile();
+               file = file.getAbsoluteFile();
+               //canvas.openPng(file);
+               fileChooser.disable();
+            }
+   }
    private void savePng()
    {
       fileChooser = new JFileChooser();
