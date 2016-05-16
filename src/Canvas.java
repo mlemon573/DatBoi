@@ -1,7 +1,6 @@
-import java.util.*;
-import java.awt.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class Canvas extends JPanel {
 	private ArrayList<DShape> shapes;
@@ -10,7 +9,7 @@ public class Canvas extends JPanel {
 	private int highlightedY;
 	
 	public Canvas() {
-		this(300, 300);
+		this(400, 400);
 	}
 
 	public Canvas(int width, int height) {

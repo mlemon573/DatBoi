@@ -23,14 +23,20 @@ public abstract class DShape
 
    abstract void draw(Graphics g);
 
-   public Rectangle getBounds()
+   protected Rectangle getBounds()
    {
       return shapeModel.getBounds();
    }
 
-   public List<Point> getKnobs()
+   protected List<Point> getKnobs()
    {
       Rectangle r = shapeModel.getBounds();
-      return new ArrayList();
+      List<Point> knobs = new ArrayList<>();
+      knobs.add(new Point((int) (r.getX()), (int) (r.getY())));
+      knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) r.getY()));
+      knobs.add(new Point((int) (r.getX()), (int) (r.getY() + r.getHeight())));
+      knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) (r.getY()
+            + r.getHeight())));
+      return knobs;
    }
 }
