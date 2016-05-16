@@ -21,6 +21,16 @@ public abstract class DShape
       shapeModel = new DShapeModel(x, y, width, height, color);
    }
 
+   public DShapeModel getShapeModel()
+   {
+      return shapeModel;
+   }
+
+   public void setShapeModel(DShapeModel shapeModel)
+   {
+      this.shapeModel = shapeModel;
+   }
+
    abstract void draw(Graphics g);
 
    protected Rectangle getBounds()
@@ -38,5 +48,24 @@ public abstract class DShape
       knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) (r.getY()
             + r.getHeight())));
       return knobs;
+   }
+}
+
+class DRect extends DShape
+{
+   public DRect()
+   {
+      super.setShapeModel(new DRectModel());
+   }
+
+   public void draw(Graphics g)
+   {
+      g.setColor(getShapeModel().getColor());
+      Rectangle r = getBounds();
+      int x = (int) r.getX();
+      int y = (int) r.getY();
+      int width = (int) r.getWidth();
+      int height = (int) r.getHeight();
+      g.drawRect(x, y, width, height);
    }
 }
