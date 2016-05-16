@@ -96,6 +96,11 @@ public abstract class DShape
       this.model = model;
    }
 
+   public void addListener(ModelListener listener)
+   {
+      model.addListener(listener);
+   }
+
    abstract void draw(Graphics g);
 
    protected List<Point> getKnobs()

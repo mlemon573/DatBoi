@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Canvas extends JPanel {
+public class Canvas extends JPanel implements ModelListener {
 	private List<DShape> shapes;
 	private DShape selected;
 	private int selectedX;
@@ -22,6 +22,7 @@ public class Canvas extends JPanel {
 	
 	public void addShape(DShape shape) {
 		shapes.add(shape);
+		shape.addListener(this);
 		selected = shape;
       repaint();
 	}
@@ -53,5 +54,11 @@ public class Canvas extends JPanel {
 		for (DShape shape : shapes) {
 			shape.draw(g);
 		}
+	}
+
+	@Override
+	public void modelChanged(DShapeModel model)
+	{
+		repaint();
 	}
 }
