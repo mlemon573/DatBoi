@@ -1,8 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -10,6 +8,7 @@ import java.io.File;
 
 public class Whiteboard extends JFrame
 {
+   private static JFileChooser fileChooser;
    //GUI elements
    private JPanel whiteboardPanel;
    private JButton rectButton;
@@ -32,8 +31,6 @@ public class Whiteboard extends JFrame
    private JMenuItem menuFileSavePng;
    private JMenuItem menuFileSaveXml;
    private JMenuItem menuFileExit;
-   private static JFileChooser	fileChooser;
-   private int saveState;
    //instance variables
    private DShape selectedShape;
    private int saveState;
@@ -68,10 +65,12 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
+            .CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
+            .CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
       menuFileSave.setMnemonic('s');
@@ -82,7 +81,8 @@ public class Whiteboard extends JFrame
       menuFileSave.add(menuFileSavePng);
       menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
+            .CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
@@ -110,9 +110,10 @@ public class Whiteboard extends JFrame
          //canvas.save(fileToSave);
 
          String desiredSaveLocation = fileToSave.getAbsolutePath();
+         int canvasWidth = canvas.getSize().width;
+         int canvasHeight = canvas.getSize().height;
          BufferedImage image =
-               new BufferedImage(canvas.getSize().width, canvas.getSize().height,
-                     BufferedImage.TYPE_INT_RGB);
+               new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
          canvas.paint(image.createGraphics());
          File imageFile = new File(desiredSaveLocation + ".png");
          try
