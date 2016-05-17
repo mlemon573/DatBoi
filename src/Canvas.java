@@ -7,8 +7,6 @@ import java.io.Serializable;
 public class Canvas extends JPanel implements ModelListener, Serializable {
 	private List<DShape> shapes;
 	private DShape selected;
-	private int selectedX;
-	private int selectedY;
 	private int id;
 
 	public Canvas() {
@@ -33,7 +31,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable {
 		selected = shape;
 		repaint();
 	}
-	
+
 	public void addShapeFromModel(DShapeModel model) {
 		DShape shape = null;
 		if (model instanceof DRectModel) {
@@ -118,8 +116,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable {
 		return null;
 	}
 
-	public void moveShape(DShape shape, int newX, int newY) {
-		
+	public void moveSelected(int dx, int dy) {
+		if (selected != null) {
+			selected.moveBy(dx, dy);
+			repaint();
+		}
 	}
 
 	@Override
