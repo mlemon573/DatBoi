@@ -110,7 +110,7 @@ public class Whiteboard extends JFrame {
 		moveToFrontButton.addActionListener(e -> canvas.moveToFront());
 		moveToBackButton.addActionListener(e -> canvas.moveToBack());
 		removeShapeButton.addActionListener(e -> canvas.removeSelected());
-		fontBox.addActionListener(e -> updateFont());
+		fontBox.addActionListener(e -> setSelectedFont());
 		canvas.addMouseListener(new CanvasListener());
 		canvas.addMouseMotionListener(new CanvasMotionListener());
 	}
@@ -220,11 +220,11 @@ public class Whiteboard extends JFrame {
 		ColorChooser.createFrame(canvas.getSelected());
 	}
 	
-	private void updateFont() {
+	private void setSelectedFont() {
 		if (canvas.getSelected() instanceof DText) {
 			DText text = (DText) canvas.getSelected();
 			text.setFont(fontBox.getSelectedItem().toString());
-			Rectangle2D bounds = text.getFont().getStringBounds(textBox.getText(),
+			Rectangle2D bounds = text.getFont().getStringBounds(text.getText(),
 					new FontRenderContext(new AffineTransform(), true, true));
 			int width = (int) bounds.getWidth();
 			int height = (int) bounds.getHeight();
@@ -261,7 +261,6 @@ public class Whiteboard extends JFrame {
 			return;
 		}
 		DText text = new DText();
-		System.out.println(fontBox.getSelectedItem().toString());
 		text.setFont(fontBox.getSelectedItem().toString());
 		Rectangle2D bounds = text.getFont().getStringBounds(textBox.getText(),
 				new FontRenderContext(new AffineTransform(), true, true));
@@ -344,6 +343,7 @@ public class Whiteboard extends JFrame {
 		textBox.setPreferredSize(new Dimension(150, 31));
 		panel5.add(textBox);
 		fontBox = new JComboBox();
+		fontBox.addItem("Default");
 		for (String font: GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
 			fontBox.addItem(font);
 		}
