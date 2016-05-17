@@ -62,11 +62,15 @@ public abstract class DShape {
 	}
 
 	public Rectangle getBounds() {
-		return model.getBounds();
+		return (Rectangle) model.getBounds().clone();
 	}
 
 	public boolean equals(DShape shape) {
 		return shape != null && this.model.equals(shape.getModel());
+	}
+	
+	public void moveBy(int dx, int dy) {
+		this.model.moveBy(dx, dy);
 	}
 
 	public DShapeModel getModel() {
