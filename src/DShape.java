@@ -151,6 +151,6 @@ class DText extends DShape {
 
 	public void draw(Graphics g) {
 		g.setColor(this.getColor());
-		g.drawString(getText(), getX() + 4, getY() + getHeight() - 4);
+		g.drawString(getText(), getX(), getY() + getHeight() - 6);
 	}
 }
