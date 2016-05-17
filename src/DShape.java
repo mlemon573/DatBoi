@@ -68,7 +68,7 @@ public abstract class DShape {
 	public boolean equals(DShape shape) {
 		return shape != null && this.model.equals(shape.getModel());
 	}
-	
+
 	public void moveBy(int dx, int dy) {
 		this.model.moveBy(dx, dy);
 	}
@@ -88,26 +88,22 @@ public abstract class DShape {
 	abstract void draw(Graphics g);
 
 	protected List<Point> getKnobs() {
-		Rectangle r = model.getBounds();
 		List<Point> knobs = new ArrayList<Point>();
-		knobs.add(new Point((int) (r.getX()), (int) (r.getY())));
-		knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) r.getY()));
-		knobs.add(new Point((int) (r.getX()), (int) (r.getY() + r.getHeight())));
-		knobs.add(new Point((int) (r.getX() + r.getWidth()), (int) (r.getY() + r.getHeight())));
+		knobs.add(new Point(getX(), getY()));
+		knobs.add(new Point(getX() + getWidth(), getY()));
+		knobs.add(new Point(getX(), getY() + getHeight()));
+		knobs.add(new Point(getX() + getWidth(), getY() + getHeight()));
 		return knobs;
 	}
 }
 
-class DRect extends DShape {
-	public DRect() {
-		super.setModel(new DRectModel());
-	}
-
-	public void draw(Graphics g) {
-		g.setColor(this.getColor());
-		g.fillRect(getX(), getY(), getWidth(), getHeight());
-	}
-}
+/*
+ * class DRect extends DShape { public DRect() { super.setModel(new
+ * DRectModel()); }
+ * 
+ * public void draw(Graphics g) { g.setColor(this.getColor());
+ * g.fillRect(getX(), getY(), getWidth(), getHeight()); } }
+ */
 
 class DOval extends DShape {
 	public DOval() {
@@ -126,7 +122,7 @@ class DLine extends DShape {
 	}
 
 	public void draw(Graphics g) {
-		
+
 	}
 }
 
@@ -145,7 +141,7 @@ class DText extends DShape {
 		return ((DTextModel) getModel()).getText();
 	}
 
-	public void setFont(Font font) {
+	public void setFont(String font) {
 		((DTextModel) getModel()).setFont(font);
 	}
 
@@ -155,6 +151,7 @@ class DText extends DShape {
 
 	public void draw(Graphics g) {
 		g.setColor(this.getColor());
+		g.setFont(getFont());
 		g.drawString(getText(), getX(), getY() + getHeight() - 6);
 	}
 }
