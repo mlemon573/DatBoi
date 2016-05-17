@@ -251,7 +251,7 @@ public class Whiteboard extends JFrame {
 		int height = (int) bounds.getHeight();
 		int x = (int) ((canvas.getWidth() - width) * Math.random());
 		int y = (int) ((canvas.getHeight() - height) * Math.random());
-		text.setBounds(x, y, width, height);
+		text.setBounds(x, y, width, height + 4);
 		text.setText(textBox.getText());
 		canvas.addShape(text);
 	}
