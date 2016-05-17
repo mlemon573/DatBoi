@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.XMLEncoder;
@@ -46,7 +47,10 @@ public class Whiteboard extends JFrame {
 	private JMenuItem menuFileSaveXml;
 	private JMenuItem menuFileExit;
 	// instance variables
-	private DShape selectedShape;
+	private int clickedX;
+	private int clickedY;
+	private boolean resizing = false;
+	private boolean moving = false;
 	private int saveState;
 	private int openState;
 
@@ -107,8 +111,8 @@ public class Whiteboard extends JFrame {
 		moveToFrontButton.addActionListener(e -> canvas.moveToFront());
 		moveToBackButton.addActionListener(e -> canvas.moveToBack());
 		removeShapeButton.addActionListener(e -> canvas.removeSelected());
-
 		canvas.addMouseListener(new CanvasListener());
+		canvas.addMouseMotionListener(new CanvasMotionListener());
 	}
 
 	private void clearCanvas() {
@@ -164,7 +168,7 @@ public class Whiteboard extends JFrame {
 			fileChooser.setEnabled(false);
 		}
 	}
-	
+
 	private void openFile() {
 		fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Open file");
@@ -178,7 +182,7 @@ public class Whiteboard extends JFrame {
 					DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
 					xmlIn.close();
 					canvas.clear();
-					for (DShapeModel model: models) {
+					for (DShapeModel model : models) {
 						canvas.addShapeFromModel(model);
 					}
 				} catch (Exception e) {
@@ -213,8 +217,7 @@ public class Whiteboard extends JFrame {
 	}
 
 	private void setSelectedColor() {
-		selectedShape = canvas.getSelected();
-		ColorChooser.createFrame(selectedShape);
+		ColorChooser.createFrame(canvas.getSelected());
 	}
 
 	private void addRect() {
@@ -226,7 +229,7 @@ public class Whiteboard extends JFrame {
 		rect.setBounds(x, y, width, height);
 		canvas.addShape(rect);
 	}
-	
+
 	private void addOval() {
 		DOval oval = new DOval();
 		int width = 50;
@@ -236,17 +239,18 @@ public class Whiteboard extends JFrame {
 		oval.setBounds(x, y, width, height);
 		canvas.addShape(oval);
 	}
-	
+
 	private void addLine() {
-		
+
 	}
-	
+
 	private void addText() {
 		if (textBox.getText().isEmpty()) {
 			return;
 		}
 		DText text = new DText();
-		Rectangle2D bounds = getFont().getStringBounds(textBox.getText(), new FontRenderContext(new AffineTransform(), true, true));
+		Rectangle2D bounds = getFont().getStringBounds(textBox.getText(),
+				new FontRenderContext(new AffineTransform(), true, true));
 		int width = (int) bounds.getWidth();
 		int height = (int) bounds.getHeight();
 		int x = (int) ((canvas.getWidth() - width) * Math.random());
@@ -357,25 +361,31 @@ public class Whiteboard extends JFrame {
 	private class CanvasListener extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			super.mouseClicked(e);
-			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
 			DShape shape = canvas.findShape(e.getX(), e.getY());
 			canvas.setSelected(shape);
 		}
-
+		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			super.mousePressed(e);
+			clickedX = e.getX();
+			clickedY = e.getY();
 		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			super.mouseReleased(e);
-		}
-
+	}
+	
+	private class CanvasMotionListener extends MouseMotionAdapter {
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			super.mouseDragged(e);
+			if (canvas.getSelected() != null) {
+				moving = true;
+				resizing = false;
+				if (moving) {
+					int dx = e.getX() - clickedX;
+					int dy = e.getY() - clickedY;
+					clickedX = e.getX();
+					clickedY = e.getY();
+					canvas.moveSelected(dx, dy);
+				}
+			}
 		}
 	}
 }
