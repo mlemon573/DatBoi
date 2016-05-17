@@ -92,8 +92,8 @@ public class DShapeModel {
 	}
 
 	public void moveBy(int dx, int dy) {
-		x += dx;
-		y += dy;
+		this.x += dx;
+		this.y += dy;
 		notifyListeners();
 	}
 
@@ -112,7 +112,7 @@ public class DShapeModel {
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
+		return (Rectangle) new Rectangle(x, y, width, height).clone();
 	}
 
 	public boolean equals(DShapeModel model) {
@@ -123,11 +123,13 @@ public class DShapeModel {
 	}
 }
 
+/*
 class DRectModel extends DShapeModel {
 	public DRectModel() {
 		super();
 	}
 }
+*/
 
 class DOvalModel extends DShapeModel {
 	public DOvalModel() {
@@ -153,14 +155,16 @@ class DTextModel extends DShapeModel {
 	
 	public void setText(String text) {
 		this.text = text;
+		notifyListeners();
 	}
 	
 	public String getText() {
 		return this.text;
 	}
 	
-	public void setFont(Font font) {
-		this.font = font;
+	public void setFont(String font) {
+		this.font = new Font(font, Font.PLAIN, 14);
+		notifyListeners();
 	}
 	
 	public Font getFont() {
