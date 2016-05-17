@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 public class Whiteboard extends JFrame {
 	private static JFileChooser fileChooser;
@@ -28,6 +31,7 @@ public class Whiteboard extends JFrame {
 	private JButton setColorButton;
 	private JTextField textBox;
 	private JComboBox fontBox;
+	private static final Font[] FONTS_ARRAY = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 	private JButton moveToFrontButton;
 	private JButton moveToBackButton;
 	private JButton removeShapeButton;
@@ -95,6 +99,9 @@ public class Whiteboard extends JFrame {
 		menuFileSavePng.addActionListener(e -> savePng());
 		menuFileSaveXml.addActionListener(e -> saveXml());
 		rectButton.addActionListener(e -> addRect());
+		ovalButton.addActionListener(e -> addOval());
+		lineButton.addActionListener(e -> addLine());
+		textButton.addActionListener(e -> addText());
 		menuFileOpen.addActionListener(e -> openFile());
 		menuFileNew.addActionListener(e -> clearCanvas());
 		moveToFrontButton.addActionListener(e -> canvas.moveToFront());
@@ -134,6 +141,8 @@ public class Whiteboard extends JFrame {
 	}
 
 	private void savePng() {
+		canvas.setSelected(null);
+		canvas.repaint();
 		fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Save As...");
 		saveState = fileChooser.showSaveDialog(Whiteboard.this);
@@ -150,7 +159,7 @@ public class Whiteboard extends JFrame {
 				imageFile.createNewFile();
 				ImageIO.write(image, "png", imageFile);
 			} catch (Exception ex) {
-				System.out.println("File cannot be saved");
+				System.out.println("File cannot be saved.");
 			}
 			fileChooser.setEnabled(false);
 		}
@@ -159,18 +168,18 @@ public class Whiteboard extends JFrame {
 	private void openFile() {
 		fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Open file");
-		saveState = fileChooser.showOpenDialog(Whiteboard.this);
+		openState = fileChooser.showOpenDialog(Whiteboard.this);
 
-		if (saveState == JFileChooser.APPROVE_OPTION) {
+		if (openState == JFileChooser.APPROVE_OPTION) {
 			File fileToOpen = fileChooser.getSelectedFile().getAbsoluteFile();
 			if (fileToOpen != null) {
 				try {
 					XMLDecoder xmlIn = new XMLDecoder(new BufferedInputStream(new FileInputStream(fileToOpen)));
-					DShape[] shapes = (DShape[]) xmlIn.readObject();
+					DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
 					xmlIn.close();
 					canvas.clear();
-					for (DShape shape: shapes) {
-						canvas.addShape(shape);
+					for (DShapeModel model: models) {
+						canvas.addShapeFromModel(model);
 					}
 				} catch (Exception e) {
 					System.out.println("File cannot be opened.");
@@ -190,14 +199,14 @@ public class Whiteboard extends JFrame {
 			try {
 				XMLEncoder xmlOut = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(file)));
 				DShape[] shapes = canvas.getShapesList().toArray(new DShape[0]);
-				DShapeModel[] shapeModels = new DShapeModel[shapes.length];
+				DShapeModel[] models = new DShapeModel[shapes.length];
 				for (int i = 0; i < shapes.length; i++) {
-					shapeModels[i] = shapes[i].getModel();
+					models[i] = shapes[i].getModel();
 				}
-				xmlOut.writeObject(shapes);
+				xmlOut.writeObject(models);
 				xmlOut.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+				System.out.println();
 			}
 			fileChooser.setEnabled(false);
 		}
@@ -216,6 +225,35 @@ public class Whiteboard extends JFrame {
 		int y = (int) ((canvas.getHeight() - height) * Math.random());
 		rect.setBounds(x, y, width, height);
 		canvas.addShape(rect);
+	}
+	
+	private void addOval() {
+		DOval oval = new DOval();
+		int width = 50;
+		int height = 50;
+		int x = (int) ((canvas.getWidth() - width) * Math.random());
+		int y = (int) ((canvas.getHeight() - height) * Math.random());
+		oval.setBounds(x, y, width, height);
+		canvas.addShape(oval);
+	}
+	
+	private void addLine() {
+		
+	}
+	
+	private void addText() {
+		if (textBox.getText().isEmpty()) {
+			return;
+		}
+		DText text = new DText();
+		Rectangle2D bounds = getFont().getStringBounds(textBox.getText(), new FontRenderContext(new AffineTransform(), true, true));
+		int width = (int) bounds.getWidth();
+		int height = (int) bounds.getHeight();
+		int x = (int) ((canvas.getWidth() - width) * Math.random());
+		int y = (int) ((canvas.getHeight() - height) * Math.random());
+		text.setBounds(x, y, width, height);
+		text.setText(textBox.getText());
+		canvas.addShape(text);
 	}
 
 	{
@@ -320,6 +358,7 @@ public class Whiteboard extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			super.mouseClicked(e);
+			System.out.println("[" + e.getX() + ", " + e.getY() + "]");
 			DShape shape = canvas.findShape(e.getX(), e.getY());
 			canvas.setSelected(shape);
 		}
