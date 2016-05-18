@@ -4,6 +4,7 @@ import java.util.List;
 
 public abstract class DShape {
 	private DShapeModel model;
+	static final int KNOB_SIZE = 9;
 
 	public DShape() {
 
@@ -87,12 +88,12 @@ public abstract class DShape {
 
 	abstract void draw(Graphics g);
 
-	protected List<Point> getKnobs() {
-		List<Point> knobs = new ArrayList<Point>();
-		knobs.add(new Point(getX(), getY()));
-		knobs.add(new Point(getX() + getWidth(), getY()));
-		knobs.add(new Point(getX(), getY() + getHeight()));
-		knobs.add(new Point(getX() + getWidth(), getY() + getHeight()));
+	protected List<Rectangle> getKnobs() {
+		List<Rectangle> knobs = new ArrayList<Rectangle>();
+		knobs.add(new Rectangle(getX() - (KNOB_SIZE/2) - 1, getY() - (KNOB_SIZE/2), KNOB_SIZE, KNOB_SIZE));
+		knobs.add(new Rectangle(getX() - (KNOB_SIZE/2) - 1 + getWidth(), getY() - (KNOB_SIZE/2), KNOB_SIZE, KNOB_SIZE));
+		knobs.add(new Rectangle(getX() - (KNOB_SIZE/2) - 1, getY() - (KNOB_SIZE/2) + getHeight(), KNOB_SIZE, KNOB_SIZE));
+		knobs.add(new Rectangle(getX() - (KNOB_SIZE/2) - 1 + getWidth(), getY() - (KNOB_SIZE/2) + getHeight(), KNOB_SIZE, KNOB_SIZE));
 		return knobs;
 	}
 }
