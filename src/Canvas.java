@@ -116,6 +116,48 @@ public class Canvas extends JPanel implements ModelListener, Serializable {
 		return null;
 	}
 
+	public Rectangle findKnob(int x, int y) {
+		for (Rectangle knob : selected.getKnobs()) {
+			if (x >= knob.getX() && x <= knob.getX() + 9 && y >= knob.getY() && y <= knob.getY() + 9) {
+				return knob;
+			}
+		}
+		return null;
+	}
+	
+	public Rectangle findAnchor(Rectangle knob) {
+		List<Rectangle> knobs = selected.getKnobs();
+		for (int i = 0; i < knobs.size(); i++) {
+			if (knobs.get(i).equals(knob)) {
+				if (i == 0) {
+					return knobs.get(knobs.size() - 1);
+				} else if (i == 1) {
+					return knobs.get(knobs.size() - 2);
+				} else if (i == 2) {
+					return knobs.get(knobs.size() - 3);
+				} else {
+					return knobs.get(knobs.size() - 4);
+				}
+			}
+		}
+		return null;
+	}
+
+	public void resizeSelected(int x, int y) {
+		if (selected instanceof DLine) {
+			return;
+		}
+		for (;;) {
+			break;
+		}
+		int newX;
+		int newY;
+		int newWidth;
+		int newHeight;
+		// selected.setBounds(newX, newY, newWidth, newHeight);
+		repaint();
+	}
+
 	public void moveSelected(int dx, int dy) {
 		if (selected != null) {
 			selected.moveBy(dx, dy);
@@ -139,16 +181,13 @@ public class Canvas extends JPanel implements ModelListener, Serializable {
 	}
 
 	public void drawKnobs(Graphics g) {
-		int squareWidth = 8;
 		if (selected != null) {
-			List<Point> knobs = selected.getKnobs();
-			for (Point p : knobs) {
-				int x = (int) (p.getX() - squareWidth / 2) - 1;
-				int y = (int) (p.getY() - squareWidth / 2);
+			List<Rectangle> knobs = selected.getKnobs();
+			for (Rectangle r : knobs) {
 				g.setColor(Color.WHITE);
-				g.fillRect(x, y, squareWidth, squareWidth);
+				g.fillRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape.KNOB_SIZE);
 				g.setColor(Color.BLACK);
-				g.drawRect(x, y, squareWidth, squareWidth);
+				g.drawRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape.KNOB_SIZE);
 			}
 		}
 	}
