@@ -216,10 +216,14 @@ public class Whiteboard extends JFrame {
 		}
 	}
 
+	private void findShape(int x, int y) {
+		canvas.setSelected(canvas.findShape(x, y));
+	}
+
 	private void setSelectedColor() {
 		ColorChooser.createFrame(canvas.getSelected());
 	}
-	
+
 	private void setSelectedFont() {
 		if (canvas.getSelected() instanceof DText) {
 			DText text = (DText) canvas.getSelected();
@@ -228,7 +232,7 @@ public class Whiteboard extends JFrame {
 					new FontRenderContext(new AffineTransform(), true, true));
 			int width = (int) bounds.getWidth();
 			int height = (int) bounds.getHeight();
-			text.setBounds(text.getX(), text.getY(), width, height + 4);
+			text.setBounds(text.getX(), text.getY(), width, height + 9);
 		}
 	}
 
@@ -268,7 +272,7 @@ public class Whiteboard extends JFrame {
 		int height = (int) bounds.getHeight();
 		int x = (int) ((canvas.getWidth() - width) * Math.random());
 		int y = (int) ((canvas.getHeight() - height) * Math.random());
-		text.setBounds(x, y, width, height + 4);
+		text.setBounds(x, y, width, height + 9);
 		text.setText(textBox.getText());
 		canvas.addShape(text);
 	}
@@ -344,7 +348,7 @@ public class Whiteboard extends JFrame {
 		panel5.add(textBox);
 		fontBox = new JComboBox();
 		fontBox.addItem("Default");
-		for (String font: GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+		for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
 			fontBox.addItem(font);
 		}
 		panel5.add(fontBox);
@@ -377,19 +381,23 @@ public class Whiteboard extends JFrame {
 
 	private class CanvasListener extends MouseAdapter {
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			DShape shape = canvas.findShape(e.getX(), e.getY());
-			canvas.setSelected(shape);
-			// System.out.println();
-			// System.out.println();
-		}
-
-		@Override
 		public void mousePressed(MouseEvent e) {
-			mouseClicked(e);
 			if (canvas.getSelected() != null) {
 				clickedX = e.getX();
 				clickedY = e.getY();
+				Rectangle knob = canvas.findKnob(clickedX, clickedY);
+				if (knob != null) {
+					resizing = true;
+					moving = false;
+				} else {
+					findShape(e.getX(), e.getY());
+					if (canvas.getSelected() != null) {
+						resizing = false;
+						moving = true;
+					}
+				}
+			} else {
+				findShape(e.getX(), e.getY());
 			}
 		}
 	}
@@ -398,14 +406,15 @@ public class Whiteboard extends JFrame {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (canvas.getSelected() != null) {
-				moving = true;
-				resizing = false;
+				int dx = e.getX() - clickedX;
+				int dy = e.getY() - clickedY;
+				clickedX = e.getX();
+				clickedY = e.getY();
 				if (moving) {
-					int dx = e.getX() - clickedX;
-					int dy = e.getY() - clickedY;
-					clickedX = e.getX();
-					clickedY = e.getY();
 					canvas.moveSelected(dx, dy);
+				}
+				if (resizing) {
+					canvas.resizeSelected(e.getX(), e.getY());
 				}
 			}
 		}
