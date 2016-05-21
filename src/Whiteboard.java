@@ -120,6 +120,7 @@ public class Whiteboard extends JFrame {
 		moveToFrontButton.addActionListener(e -> canvas.moveToFront());
 		moveToBackButton.addActionListener(e -> canvas.moveToBack());
 		removeShapeButton.addActionListener(e -> canvas.removeSelected());
+		textBox.addKeyListener(new TextChangeListener());
 		fontBox.addActionListener(e -> setSelectedFont());
 		canvas.addMouseListener(new CanvasListener());
 		canvas.addMouseMotionListener(new CanvasMotionListener());
@@ -416,6 +417,22 @@ public class Whiteboard extends JFrame {
 					canvas.resizeSelected(dx, dy);
 				}
 			}
+		}
+	}
+
+	private class TextChangeListener implements KeyListener {
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			DText text = (DText) canvas.getSelected();
+			text.setText(textBox.getText());
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
 		}
 	}
 }
