@@ -225,6 +225,7 @@ public class Whiteboard extends JFrame {
 
 	private void findShape(int x, int y) {
 		canvas.setSelected(canvas.findShape(x, y));
+		textCheck();
 	}
 
 	private void setSelectedColor() {
@@ -235,12 +236,6 @@ public class Whiteboard extends JFrame {
 		if (canvas.getSelected() instanceof DText) {
 			DText text = (DText) canvas.getSelected();
 			text.setFont(fontBox.getSelectedItem().toString());
-			/*
-			Rectangle2D bounds = text.getFont().getStringBounds(text.getText(),
-					new FontRenderContext(new AffineTransform(), true, true));
-			int width = (int) bounds.getWidth();
-			int height = (int) bounds.getHeight();
-			*/
 			text.setBounds(text.getX(), text.getY(), text.getWidth(), text.getHeight());
 		}
 	}
@@ -249,18 +244,21 @@ public class Whiteboard extends JFrame {
 		DRect rect = new DRect();
 		rect.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
 		canvas.addShape(rect);
+		textCheck();
 	}
 
 	private void addOval() {
 		DOval oval = new DOval();
 		oval.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
 		canvas.addShape(oval);
+		textCheck();
 	}
 
 	private void addLine() {
 		DLine line = new DLine();
 		line.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
 		canvas.addShape(line);
+		textCheck();
 	}
 
 	private void addText() {
@@ -272,6 +270,17 @@ public class Whiteboard extends JFrame {
 		text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
 		text.setText(textBox.getText());
 		canvas.addShape(text);
+	}
+
+	private void textCheck() {
+		if (canvas.getSelected() == null || canvas.getSelected() instanceof DText) {
+			textBox.setEnabled(true);
+			fontBox.setEnabled(true);
+		} else {
+			textBox.setEnabled(false);
+			fontBox.setEnabled(false);
+		}
+		repaint();
 	}
 
 	/**
