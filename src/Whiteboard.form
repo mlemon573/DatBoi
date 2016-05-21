@@ -98,7 +98,7 @@
                       <preferredSize width="150" height="31"/>
                     </properties>
                   </component>
-                  <component id="824cf" class="javax.swing.JComboBox" binding="fontBox">
+                  <component id="824cf" class="javax.swing.JComboBox" binding="fontBox" custom-create="true">
                     <constraints/>
                     <properties/>
                   </component>
