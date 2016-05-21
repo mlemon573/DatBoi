@@ -235,11 +235,13 @@ public class Whiteboard extends JFrame {
 		if (canvas.getSelected() instanceof DText) {
 			DText text = (DText) canvas.getSelected();
 			text.setFont(fontBox.getSelectedItem().toString());
+			/*
 			Rectangle2D bounds = text.getFont().getStringBounds(text.getText(),
 					new FontRenderContext(new AffineTransform(), true, true));
 			int width = (int) bounds.getWidth();
 			int height = (int) bounds.getHeight();
-			text.setBounds(text.getX(), text.getY(), width, height + DShape.KNOB_SIZE);
+			*/
+			text.setBounds(text.getX(), text.getY(), text.getWidth(), text.getHeight());
 		}
 	}
 
@@ -267,13 +269,7 @@ public class Whiteboard extends JFrame {
 		}
 		DText text = new DText();
 		text.setFont(fontBox.getSelectedItem().toString());
-		Rectangle2D bounds = text.getFont().getStringBounds(textBox.getText(),
-				new FontRenderContext(new AffineTransform(), true, true));
-		int width = (int) bounds.getWidth();
-		int height = (int) bounds.getHeight();
-		int x = (int) ((canvas.getWidth() - width) * Math.random());
-		int y = (int) ((canvas.getHeight() - height) * Math.random());
-		text.setBounds(x, y, width, height + DShape.KNOB_SIZE);
+		text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
 		text.setText(textBox.getText());
 		canvas.addShape(text);
 	}
@@ -339,8 +335,9 @@ public class Whiteboard extends JFrame {
 		panel2.add(panel5, gbc);
 		textBox = new JTextField();
 		textBox.setPreferredSize(new Dimension(150, 31));
+		textBox.setText("Hello");
 		fontBox = new JComboBox<>();
-		fontBox.addItem("Default");
+		fontBox.addItem("Dialogue");
 		for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
 			fontBox.addItem(font);
 		}
