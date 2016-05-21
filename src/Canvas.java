@@ -98,6 +98,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       else {return selected.getKnobs().get(sKnob);}
    }
 
+   private void setSelectedKnob(int i)
+   {
+      sKnob = i;
+   }
+
    public void setSelectedKnob(Rectangle rect)
    {
       List<Rectangle> knobs = selected.getKnobs();
@@ -107,11 +112,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          Rectangle r = knobs.get(i);
          if (r != null && r.equals(rect))
          {
-            sKnob = i;
+            setSelectedKnob(i);
             set = true;
          }
       }
-      if (!set) {sKnob = -1;}
+      if (!set) {setSelectedKnob(-1);}
    }
 
    public int getSelectedIndex()
@@ -191,6 +196,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       Rectangle bounds = selected.getBounds();
       Rectangle sel = getSelectedKnob();
       Rectangle opp = findAnchor();
+
       if (sel == null || opp == null) {return;}
       int newX = (int) bounds.getX();
       int newY = (int) bounds.getY();
@@ -198,17 +204,47 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       int newHeight = (int) bounds.getHeight();
 
       if (sel.getX() > opp.getX()) {newWidth += dx;}
+      if (sel.getY() > opp.getY()) {newHeight += dy;}
       if (sel.getX() < opp.getX())
       {
          newX += dx;
          newWidth -= dx;
       }
-      if (sel.getY() > opp.getY()) {newHeight += dy;}
       if (sel.getY() < opp.getY())
       {
          newY += dy;
          newHeight -= dy;
       }
+      if (newWidth <= 0)
+      {
+         if (dx > 0) {sKnob += 1;}
+         if (dx < 0) {sKnob -= 1;}
+
+         newX -= 1;
+         newWidth = 1;
+         if (selected.getClass().equals(DLine.class))
+         {
+            DLine temp = (DLine) selected;
+            temp.setInvertX(!temp.getInvertX());
+         }
+      }
+      if (newHeight <= 0)
+      {
+         if (dy > 0) {sKnob += 2;}
+         if (dy < 0) {sKnob -= 2;}
+
+         newY -= 1;
+         newHeight = 1;
+         if (selected.getClass().equals(DLine.class))
+         {
+            DLine temp = (DLine) selected;
+            temp.setInvertY(!temp.getInvertY());
+         }
+      }
+
+      System.out.printf("%d, %d, %d, %d, %d, %d%n", dx, dy, newX, newY, newWidth,
+            newHeight);
+
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
    }
