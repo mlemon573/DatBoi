@@ -69,16 +69,13 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
-            .CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
       menuFileSave.setMnemonic('s');
       menuFileSavePng = new JMenuItem("PNG");
       menuFileSavePng.setMnemonic('p');
@@ -87,8 +84,7 @@ public class Whiteboard extends JFrame
       menuFileSave.add(menuFileSavePng);
       menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
-            .CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
@@ -101,12 +97,10 @@ public class Whiteboard extends JFrame
       menuNetwork = new JMenu("Network");
       menuNetwork.setMnemonic('n');
       startServer = new JMenuItem("Start Server");
-      startServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent
-            .ALT_MASK));
+      startServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
       startServer.setMnemonic('s');
       startClient = new JMenuItem("Start Client");
-      startClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent
-            .ALT_MASK));
+      startClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
       startClient.setMnemonic('c');
       menuNetwork.add(startServer);
       menuNetwork.add(startClient);
@@ -209,8 +203,7 @@ public class Whiteboard extends JFrame
             try
             {
                XMLDecoder xmlIn =
-                     new XMLDecoder(new BufferedInputStream(new FileInputStream
-                           (fileToOpen)));
+                     new XMLDecoder(new BufferedInputStream(new FileInputStream(fileToOpen)));
                DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
                xmlIn.close();
                canvas.clear();
@@ -272,8 +265,7 @@ public class Whiteboard extends JFrame
          DText text = (DText) canvas.getSelected();
          text.setFont(fontBox.getSelectedItem().toString());
          Rectangle2D bounds =
-               text.getFont().getStringBounds(text.getText(), new FontRenderContext(new
-                     AffineTransform(), true, true));
+               text.getFont().getStringBounds(text.getText(), new FontRenderContext(new AffineTransform(), true, true));
          int width = (int) bounds.getWidth();
          int height = (int) bounds.getHeight();
          text.setBounds(text.getX(), text.getY(), width, height + 9);
@@ -322,8 +314,7 @@ public class Whiteboard extends JFrame
       DText text = new DText();
       text.setFont(fontBox.getSelectedItem().toString());
       Rectangle2D bounds =
-            text.getFont().getStringBounds(textBox.getText(), new FontRenderContext(new
-                  AffineTransform(), true, true));
+            text.getFont().getStringBounds(textBox.getText(), new FontRenderContext(new AffineTransform(), true, true));
       int width = (int) bounds.getWidth();
       int height = (int) bounds.getHeight();
       int x = (int) ((canvas.getWidth() - width) * Math.random());
@@ -337,8 +328,7 @@ public class Whiteboard extends JFrame
    {
       fontBox = new JComboBox<>();
       fontBox.addItem("Default");
-      for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getAvailableFontFamilyNames())
+      for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
       {fontBox.addItem(font);}
    }
 
@@ -441,6 +431,7 @@ public class Whiteboard extends JFrame
          if (canvas.getSelected() != null)
          {
             Rectangle knob = canvas.findKnob(clickedX, clickedY);
+            canvas.setSelectedKnob(knob);
             if (knob != null)
             {
                resizing = true;
@@ -449,11 +440,8 @@ public class Whiteboard extends JFrame
             else
             {
                findShape(e.getX(), e.getY());
-               if (canvas.getSelected() != null)
-               {
-                  resizing = false;
-                  moving = true;
-               }
+               resizing = false;
+               moving = true;
             }
          }
          else
@@ -475,7 +463,7 @@ public class Whiteboard extends JFrame
             clickedX = e.getX();
             clickedY = e.getY();
             if (moving) {canvas.moveSelected(dx, dy);}
-            if (resizing) {canvas.resizeSelected(e.getX(), e.getY());}
+            if (resizing) {canvas.resizeSelected(dx, dx);}
          }
       }
    }

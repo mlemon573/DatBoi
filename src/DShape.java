@@ -7,10 +7,7 @@ public abstract class DShape
    static final int KNOB_SIZE = 9;
    private DShapeModel model;
 
-   public DShape()
-   {
-
-   }
+   public DShape() {}
 
    public int getX()
    {
@@ -109,9 +106,9 @@ public abstract class DShape
 
    abstract void draw(Graphics g);
 
-   protected List<Rectangle> getKnobs()
+   List<Rectangle> getKnobs()
    {
-      List<Rectangle> knobs = new ArrayList<Rectangle>();
+      List<Rectangle> knobs = new ArrayList<>();
       knobs.add(new Rectangle(
             getX() - (KNOB_SIZE / 2) - 1,
             getY() - (KNOB_SIZE / 2), KNOB_SIZE, KNOB_SIZE));

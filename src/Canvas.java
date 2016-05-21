@@ -8,6 +8,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 {
    private List<DShape> shapes;
    private DShape selected;
+   private int sKnob;
    private int id;
 
    public Canvas()
@@ -91,6 +92,28 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       repaint();
    }
 
+   public Rectangle getSelectedKnob()
+   {
+      if (sKnob == -1) {return null;}
+      else {return selected.getKnobs().get(sKnob);}
+   }
+
+   public void setSelectedKnob(Rectangle rect)
+   {
+      List<Rectangle> knobs = selected.getKnobs();
+      boolean set = false;
+      for (int i = 0; i < knobs.size(); i++)
+      {
+         Rectangle r = knobs.get(i);
+         if (r != null && r.equals(rect))
+         {
+            sKnob = i;
+            set = true;
+         }
+      }
+      if (!set) {sKnob = -1;}
+   }
+
    public int getSelectedIndex()
    {
       for (int i = 0; i < shapes.size(); i++)
@@ -150,54 +173,34 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       for (Rectangle knob : selected.getKnobs())
       {
-         if (x >= knob.getX() && x <= knob.getX() + 9 && y >= knob.getY()
-               && y <= knob.getY() + 9)
-         {
-            return knob;
-         }
+         if (knob != null && x >= knob.getX() && x <= knob.getX() + DShape.KNOB_SIZE
+               && y >= knob.getY() && y <= knob.getY() + DShape.KNOB_SIZE) {return knob;}
       }
       return null;
    }
 
-   public Rectangle findAnchor(Rectangle knob)
+   public Rectangle findAnchor()
    {
       List<Rectangle> knobs = selected.getKnobs();
-      for (int i = 0; i < knobs.size(); i++)
-      {
-         if (knobs.get(i).equals(knob))
-         {
-            if (i == 0)
-            {
-               return knobs.get(knobs.size() - 1);
-            }
-            else if (i == 1)
-            {
-               return knobs.get(knobs.size() - 2);
-            }
-            else if (i == 2)
-            {
-               return knobs.get(knobs.size() - 3);
-            }
-            else
-            {
-               return knobs.get(knobs.size() - 4);
-            }
-         }
-      }
-      return null;
+      if (sKnob == -1) {return null;}
+      else {return knobs.get(3 - sKnob);}
    }
 
-   public void resizeSelected(int x, int y)
+   public void resizeSelected(int dx, int dy)
    {
-      for (; ; )
-      {
-         break;
-      }
-      int newX;
-      int newY;
-      int newWidth;
-      int newHeight;
-      // selected.setBounds(newX, newY, newWidth, newHeight);
+      Rectangle bounds = selected.getBounds();
+      Rectangle sel = getSelectedKnob();
+      Rectangle opp = findAnchor();
+      if (sel == null || opp == null) {return;}
+      int newX = (int) bounds.getX();
+      int newY = (int) bounds.getY();
+      int newWidth = (int) bounds.getWidth();
+      int newHeight = (int) bounds.getHeight();
+      if (sel.getX() > opp.getX()) {newWidth += dx;}
+      if (sel.getX() < opp.getX()) {newX += dx;}
+      if (sel.getY() > opp.getY()) {newHeight += dy;}
+      if (sel.getY() < opp.getY()) {newY += dy;}
+      selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
    }
 
@@ -230,15 +233,18 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       if (selected != null)
       {
-         List<Rectangle> knobs = selected.getKnobs();
-         for (Rectangle r : knobs)
+         for (Rectangle r : selected.getKnobs())
          {
-            g.setColor(Color.WHITE);
-            g.fillRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
-                  .KNOB_SIZE);
-            g.setColor(Color.BLACK);
-            g.drawRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
-                  .KNOB_SIZE);
+            if (r != null)
+            {
+               g.setColor(Color.WHITE);
+               g.fillRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
+                     .KNOB_SIZE);
+
+               g.setColor(Color.BLACK);
+               g.drawRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
+                     .KNOB_SIZE);
+            }
          }
       }
    }
