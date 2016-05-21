@@ -463,7 +463,7 @@ public class Whiteboard extends JFrame
             clickedX = e.getX();
             clickedY = e.getY();
             if (moving) {canvas.moveSelected(dx, dy);}
-            if (resizing) {canvas.resizeSelected(dx, dx);}
+            if (resizing) {canvas.resizeSelected(dx, dy);}
          }
       }
    }

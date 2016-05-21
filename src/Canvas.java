@@ -196,10 +196,19 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       int newY = (int) bounds.getY();
       int newWidth = (int) bounds.getWidth();
       int newHeight = (int) bounds.getHeight();
+
       if (sel.getX() > opp.getX()) {newWidth += dx;}
-      if (sel.getX() < opp.getX()) {newX += dx;}
+      if (sel.getX() < opp.getX())
+      {
+         newX += dx;
+         newWidth -= dx;
+      }
       if (sel.getY() > opp.getY()) {newHeight += dy;}
-      if (sel.getY() < opp.getY()) {newY += dy;}
+      if (sel.getY() < opp.getY())
+      {
+         newY += dy;
+         newHeight -= dy;
+      }
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
    }
