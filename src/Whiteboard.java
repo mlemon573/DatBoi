@@ -66,13 +66,11 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
-            .CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
       menuFileSave.setMnemonic('s');
@@ -83,8 +81,7 @@ public class Whiteboard extends JFrame
       menuFileSave.add(menuFileSavePng);
       menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
-            .CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
@@ -191,8 +188,7 @@ public class Whiteboard extends JFrame
             try
             {
                XMLDecoder xmlIn =
-                     new XMLDecoder(new BufferedInputStream(new FileInputStream
-                           (fileToOpen)));
+                     new XMLDecoder(new BufferedInputStream(new FileInputStream(fileToOpen)));
                DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
                xmlIn.close();
                canvas.clear();
@@ -257,8 +253,7 @@ public class Whiteboard extends JFrame
          DText text = (DText) canvas.getSelected();
          text.setFont(fontBox.getSelectedItem().toString());
          Rectangle2D bounds =
-               text.getFont().getStringBounds(text.getText(), new FontRenderContext(new
-                     AffineTransform(), true, true));
+               text.getFont().getStringBounds(text.getText(), new FontRenderContext(new AffineTransform(), true, true));
          int width = (int) bounds.getWidth();
          int height = (int) bounds.getHeight();
          text.setBounds(text.getX(), text.getY(), width, height + 9);
@@ -301,8 +296,7 @@ public class Whiteboard extends JFrame
       DText text = new DText();
       text.setFont(fontBox.getSelectedItem().toString());
       Rectangle2D bounds =
-            text.getFont().getStringBounds(textBox.getText(), new FontRenderContext(new
-                  AffineTransform(), true, true));
+            text.getFont().getStringBounds(textBox.getText(), new FontRenderContext(new AffineTransform(), true, true));
       int width = (int) bounds.getWidth();
       int height = (int) bounds.getHeight();
       int x = (int) ((canvas.getWidth() - width) * Math.random());
@@ -316,8 +310,7 @@ public class Whiteboard extends JFrame
    {
       fontBox = new JComboBox();
       fontBox.addItem("Default");
-      for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getAvailableFontFamilyNames())
+      for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
       {fontBox.addItem(font);}
    }
 
