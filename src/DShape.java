@@ -108,19 +108,15 @@ public abstract class DShape
 
    List<Rectangle> getKnobs()
    {
+      int baseX = getX() - (KNOB_SIZE / 2);
+      int baseY = getY() - (KNOB_SIZE / 2);
+      int width = getWidth();
+      int height = getHeight();
       List<Rectangle> knobs = new ArrayList<>();
-      knobs.add(new Rectangle(
-            getX() - (KNOB_SIZE / 2) - 1,
-            getY() - (KNOB_SIZE / 2), KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(
-            getX() - (KNOB_SIZE / 2) - 1 + getWidth(),
-            getY() - (KNOB_SIZE / 2), KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(
-            getX() - (KNOB_SIZE / 2) - 1,
-            getY() - (KNOB_SIZE / 2) + getHeight(), KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(
-            getX() - (KNOB_SIZE / 2) - 1 + getWidth(),
-            getY() - (KNOB_SIZE / 2) + getHeight(), KNOB_SIZE, KNOB_SIZE));
+      knobs.add(new Rectangle(baseX - 1, baseY, KNOB_SIZE, KNOB_SIZE));
+      knobs.add(new Rectangle(baseX - 1 + width, baseY, KNOB_SIZE, KNOB_SIZE));
+      knobs.add(new Rectangle(baseX - 1, baseY + height, KNOB_SIZE, KNOB_SIZE));
+      knobs.add(new Rectangle(baseX - 1 + width, baseY + height, KNOB_SIZE, KNOB_SIZE));
       return knobs;
    }
 }
