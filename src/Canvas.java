@@ -189,10 +189,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
    public void resizeSelected(int x, int y)
    {
-      if (selected instanceof DLine)
-      {
-         return;
-      }
       for (; ; )
       {
          break;
@@ -226,10 +222,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       for (DShape shape : shapes)
       {
          shape.draw(g);
-         if (shape.equals(selected))
-         {
-            drawKnobs(g);
-         }
+         if (shape.equals(selected)) {drawKnobs(g);}
       }
    }
 
