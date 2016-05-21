@@ -92,17 +92,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       repaint();
    }
 
-   public Rectangle getSelectedKnob()
-   {
-      if (sKnob == -1) {return null;}
-      else {return selected.getKnobs().get(sKnob);}
-   }
-
-   private void setSelectedKnob(int i)
-   {
-      sKnob = i;
-   }
-
    public void setSelectedKnob(Rectangle rect)
    {
       List<Rectangle> knobs = selected.getKnobs();
@@ -117,6 +106,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          }
       }
       if (!set) {setSelectedKnob(-1);}
+   }
+
+   private void setSelectedKnob(int i)
+   {
+      sKnob = i;
    }
 
    public int getSelectedIndex()
@@ -184,68 +178,56 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
-   public Rectangle findAnchor()
-   {
-      List<Rectangle> knobs = selected.getKnobs();
-      if (sKnob == -1) {return null;}
-      else {return knobs.get(3 - sKnob);}
-   }
-
    public void resizeSelected(int dx, int dy)
    {
       Rectangle bounds = selected.getBounds();
-      Rectangle sel = getSelectedKnob();
-      Rectangle opp = findAnchor();
-
-      if (sel == null || opp == null) {return;}
       int newX = (int) bounds.getX();
       int newY = (int) bounds.getY();
       int newWidth = (int) bounds.getWidth();
       int newHeight = (int) bounds.getHeight();
 
-      if (sel.getX() > opp.getX()) {newWidth += dx;}
-      if (sel.getY() > opp.getY()) {newHeight += dy;}
-      if (sel.getX() < opp.getX())
+      switch (sKnob)
       {
-         newX += dx;
-         newWidth -= dx;
+         case 0:
+            newX += dx;
+            newWidth -= dx;
+            newY += dy;
+            newHeight -= dy;
+            break;
+         case 1:
+            newWidth += dx;
+            newY += dy;
+            newHeight -= dy;
+            break;
+         case 2:
+            newX += dx;
+            newWidth -= dx;
+            newHeight += dy;
+            break;
+         case 3:
+            newWidth += dx;
+            newHeight += dy;
+            break;
       }
-      if (sel.getY() < opp.getY())
-      {
-         newY += dy;
-         newHeight -= dy;
-      }
-      if (newWidth <= 0)
+      if (newWidth < 0)
       {
          if (dx > 0) {sKnob += 1;}
          if (dx < 0) {sKnob -= 1;}
-         if (newWidth == 0) {newWidth = -1;}
          newX += newWidth;
          newWidth = -newWidth;
-         if (selected.getClass().equals(DLine.class))
-         {
-            DLine temp = (DLine) selected;
-            temp.setInvertX(!temp.getInvertX());
-         }
+         if (selected.getClass().equals(DLine.class)) {((DLine) selected).invertX();}
       }
-      if (newHeight <= 0)
+      if (newHeight < 0)
       {
          if (dy > 0) {sKnob += 2;}
          if (dy < 0) {sKnob -= 2;}
-         if (newHeight == 0) {newHeight = -1;}
          newY += newHeight;
          newHeight = -newHeight;
-         if (selected.getClass().equals(DLine.class))
-         {
-            DLine temp = (DLine) selected;
-            temp.setInvertY(!temp.getInvertY());
-         }
+         if (selected.getClass().equals(DLine.class)) {((DLine) selected).invertY();}
       }
 
-      //System.out.printf("%d, %d, %d, %d, %d, %d%n", dx, dy, newX, newY, newWidth,
-      // newHeight);
       System.out.printf("x: %d, %d, %d%n", dx, newX, newWidth);
-      System.out.printf("y: %d, %d, %d%n", dy, newY, newHeight);
+      System.out.printf("y: %d, %d, %d%n%n", dy, newY, newHeight);
 
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
