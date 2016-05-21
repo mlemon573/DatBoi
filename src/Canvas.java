@@ -219,9 +219,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       {
          if (dx > 0) {sKnob += 1;}
          if (dx < 0) {sKnob -= 1;}
-
-         newX -= 1;
-         newWidth = 1;
+         if (newWidth == 0) {newWidth = -1;}
+         newX += newWidth;
+         newWidth = -newWidth;
          if (selected.getClass().equals(DLine.class))
          {
             DLine temp = (DLine) selected;
@@ -232,9 +232,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       {
          if (dy > 0) {sKnob += 2;}
          if (dy < 0) {sKnob -= 2;}
-
-         newY -= 1;
-         newHeight = 1;
+         if (newHeight == 0) {newHeight = -1;}
+         newY += newHeight;
+         newHeight = -newHeight;
          if (selected.getClass().equals(DLine.class))
          {
             DLine temp = (DLine) selected;
@@ -242,8 +242,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          }
       }
 
-      System.out.printf("%d, %d, %d, %d, %d, %d%n", dx, dy, newX, newY, newWidth,
-            newHeight);
+      //System.out.printf("%d, %d, %d, %d, %d, %d%n", dx, dy, newX, newY, newWidth,
+      // newHeight);
+      System.out.printf("x: %d, %d, %d%n", dx, newX, newWidth);
+      System.out.printf("y: %d, %d, %d%n", dy, newY, newHeight);
 
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
