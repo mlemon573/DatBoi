@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class DLine extends DShape
+public class DLine extends DShape
 {
    private boolean invertX = false;
    private boolean invertY = false;
@@ -13,7 +13,7 @@ class DLine extends DShape
    }
 
    @Override
-   List<Rectangle> getKnobs()
+   public List<Rectangle> getKnobs()
    {
       int baseX = getX() - (KNOB_SIZE / 2);
       int baseY = getY() - (KNOB_SIZE / 2);
@@ -41,12 +41,12 @@ class DLine extends DShape
             !invertY ? getY() + getHeight() : getY());
    }
 
-   void invertX()
+   public void invertX()
    {
       invertX = !invertX;
    }
 
-   void invertY()
+   public void invertY()
    {
       invertY = !invertY;
    }
