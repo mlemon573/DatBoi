@@ -14,16 +14,16 @@ public class DShapeModel
 
    public DShapeModel()
    {
-      this(0, 0, 0, 0, Color.GRAY, 0);
+      this(0, 0, 0, 0, Color.GRAY);
       listeners = new ArrayList<>();
    }
 
-   public DShapeModel(int x, int y, int width, int height, int id)
+   public DShapeModel(int x, int y, int width, int height)
    {
-      this(x, y, width, height, Color.GRAY, 0);
+      this(x, y, width, height, Color.GRAY);
    }
 
-   public DShapeModel(int x, int y, int width, int height, Color color, int id)
+   public DShapeModel(int x, int y, int width, int height, Color color)
    {
       this.x = x;
       this.y = y;
