@@ -96,6 +96,7 @@
                     <constraints/>
                     <properties>
                       <preferredSize width="150" height="31"/>
+                      <text value="Hello"/>
                     </properties>
                   </component>
                   <component id="824cf" class="javax.swing.JComboBox" binding="fontBox" custom-create="true">
@@ -134,6 +135,20 @@
               </grid>
             </children>
           </grid>
+          <scrollpane id="9dd6c" binding="scrollPane" custom-create="true">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <horizontalScrollBarPolicy value="31"/>
+              <visible value="true"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="1431e" class="javax.swing.JTable" binding="tableContainer" custom-create="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
       <component id="949ff" class="javax.swing.JMenuBar" binding="menuBar">
