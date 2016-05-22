@@ -20,8 +20,8 @@ public class DataTable extends AbstractTableModel
    public DataTable()
    {
       dataModels = new ArrayList<>();
-      //columnNames = new String[]{"X", "Y", "Width", "Height", "ID"};
-      columnNames = new String[]{"X", "Y", "Width", "Height"};
+      columnNames = new String[]{"X", "Y", "Width", "Height", "ID"};
+      //columnNames = new String[]{"X", "Y", "Width", "Height"};
    }
 
    @Override
@@ -50,8 +50,8 @@ public class DataTable extends AbstractTableModel
             return dataModels.get(selectedShape).getWidth();
          case 3:
             return dataModels.get(selectedShape).getHeight();
-         //case 4:
-         //    return dataModels.get(selectedShape).getID();
+         case 4:
+             return dataModels.get(selectedShape).getID();
       }
       return null;
    }

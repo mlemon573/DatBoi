@@ -6,17 +6,19 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
    static String default_port = "8001";
    static String default_host = "127.0.0.1";
-
+   String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
    private List<DShape> shapes;
    private DShape selected;
    private int sKnob;
    private int id;
+   private DataTable dataTable;
    private List<ObjectOutputStream> outputStreamList;
    private String mode;
    private Client client;
@@ -37,6 +39,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       id = 1;
    }
 
+   public void setDataTable(DataTable dataTable)
+   {
+      this.dataTable = dataTable;
+   }
+
    public void addShape(DShape shape)
    {
       if (shape == null) {return;}
@@ -45,6 +52,8 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       shape.setID(id++);
       selected = shape;
       repaint();
+      sendToAllRemotes(1, shape.getModel());
+      dataTable.addNewRow(shape.getModel());
    }
 
    public void addShape(DShapeModel model)
@@ -58,8 +67,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       if (shapes.contains(selected))
       {
          shapes.remove(selected);
+         sendToAllRemotes(2, selected.getModel());
+         dataTable.removeRow(selected.getModel());
          selected = null;
          repaint();
+         id--;
       }
    }
 
@@ -106,10 +118,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       for (int i = 0; i < shapes.size(); i++)
       {
-         if (shapes.get(i).equals(selected))
-         {
-            return i;
-         }
+         if (shapes.get(i).equals(selected)) {return i;}
       }
       return -1;
    }
@@ -117,25 +126,23 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    public void moveToFront()
    {
       int i = getSelectedIndex();
-      if (i == -1)
-      {
-         return;
-      }
+      if (i == -1) {return;}
       DShape shape = shapes.remove(i);
       shapes.add(shape);
       repaint();
+      sendToAllRemotes(3, selected.getModel());
+      dataTable.moveRowUp(selected.getModel());
    }
 
    public void moveToBack()
    {
       int i = getSelectedIndex();
-      if (i == -1)
-      {
-         return;
-      }
+      if (i == -1) {return;}
       DShape shape = shapes.remove(i);
       shapes.add(0, shape);
       repaint();
+      sendToAllRemotes(4, selected.getModel());
+      dataTable.moveRowDown(selected.getModel());
    }
 
    public List<DShape> getShapesList()
@@ -222,6 +229,8 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
+      sendToAllRemotes(5, selected.getModel());
+      dataTable.updateRow(selected.getModel());
    }
 
    public void moveSelected(int dx, int dy)
@@ -230,6 +239,8 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       {
          selected.moveBy(dx, dy);
          repaint();
+         sendToAllRemotes(5, selected.getModel());
+         dataTable.updateRow(selected.getModel());
       }
    }
 
@@ -278,6 +289,8 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
    {
       DShape old = getShapeByID(newModel.getID());
+      if (old != null) {System.out.println("Old: " + old.getID());}
+      System.out.println("New: " + newModel.getID());
       if (cmdCode != 1 && old == null)
       {
          System.out.println("Sync Failed!");
@@ -303,9 +316,39 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
       else if (cmdCode == 5)
       {
+         System.out.println("old: " + old);
          setSelected(old);
+         System.out.println("selected b4: " + selected);
          removeSelected();
          addShape(newModel);
+         System.out.println("selected a4: " + selected);
+         selected.setID(old.getID());
+      }
+      if (selected != null) {System.out.println("Selected: " + selected.getID());}
+      System.out.println("New2: " + newModel.getID());
+   }
+
+   public synchronized void sendToAllRemotes(int cmdIndex, DShapeModel target)
+   {
+      if (!"Server".equals(mode)) {return;}
+      OutputStream output = new ByteArrayOutputStream();
+      XMLEncoder encoder = new XMLEncoder(output);
+
+      encoder.writeObject(target);
+      encoder.close();
+      String xmlString = output.toString();
+      Iterator<ObjectOutputStream> osIterator = outputStreamList.iterator();
+      while (osIterator.hasNext())
+      {
+         ObjectOutputStream out = osIterator.next();
+         try
+         {
+            out.writeObject(cmdList[cmdIndex]);
+            out.flush();
+            out.writeObject(xmlString);
+            out.flush();
+         }
+         catch (Exception e) {e.printStackTrace();}
       }
    }
 
@@ -366,8 +409,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       @Override
       public void run()
       {
-         //todo define elsewhere later
-         String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
          try
          {
             Socket serverSocket = new Socket(host, port);

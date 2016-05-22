@@ -53,6 +53,7 @@ public class Whiteboard extends JFrame
    private Whiteboard()
    {
       $$$setupUI$$$();
+      canvas.setDataTable(dataTable);
       buildMenu();
       buildButtonListeners();
    }
@@ -73,16 +74,13 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
-            .CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent
-            .CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
       menuFileSave.setMnemonic('s');
       menuFileSavePng = new JMenuItem("PNG");
       menuFileSavePng.setMnemonic('p');
@@ -91,8 +89,7 @@ public class Whiteboard extends JFrame
       menuFileSave.add(menuFileSavePng);
       menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
-            .CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
@@ -105,12 +102,10 @@ public class Whiteboard extends JFrame
       menuNetwork = new JMenu("Network");
       menuNetwork.setMnemonic('n');
       menuNetworkStartServer = new JMenuItem("Start Server");
-      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-            InputEvent.ALT_MASK));
+      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
       menuNetworkStartServer.setMnemonic('s');
       menuNetworkJoinServer = new JMenuItem("Join Server");
-      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-            InputEvent.ALT_MASK));
+      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
       menuNetworkJoinServer.setMnemonic('c');
       menuNetwork.add(menuNetworkStartServer);
       menuNetwork.add(menuNetworkJoinServer);
@@ -143,24 +138,18 @@ public class Whiteboard extends JFrame
    private void moveToFront()
    {
       canvas.moveToFront();
-      DShape selected = canvas.getSelected();
-      if (selected != null) {dataTable.moveRowUp(selected.getModel());}
       dirty = true;
    }
 
    private void moveToBack()
    {
       canvas.moveToBack();
-      DShape selected = canvas.getSelected();
-      if (selected != null) {dataTable.moveRowDown(selected.getModel());}
       dirty = true;
    }
 
    private void removeSelected()
    {
-      DShape selected = canvas.getSelected();
       canvas.removeSelected();
-      if (selected != null) {dataTable.removeRow(selected.getModel());}
       dirty = true;
    }
 
@@ -224,15 +213,13 @@ public class Whiteboard extends JFrame
             try
             {
                XMLDecoder xmlIn =
-                     new XMLDecoder(new BufferedInputStream(new FileInputStream
-                           (fileToOpen)));
+                     new XMLDecoder(new BufferedInputStream(new FileInputStream(fileToOpen)));
                DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
                xmlIn.close();
                canvas.clear();
                for (DShapeModel model : models)
                {
                   canvas.addShape(model);
-                  dataTable.addNewRow(model);
                }
             }
             catch (Exception e)
@@ -301,33 +288,27 @@ public class Whiteboard extends JFrame
    private void addRect()
    {
       DRect rect = new DRect();
-      rect.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-            .DEFAULT_HEIGHT);
+      rect.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
       canvas.addShape(rect);
       textCheck();
-      dataTable.addNewRow(rect.getModel());
       dirty = true;
    }
 
    private void addOval()
    {
       DOval oval = new DOval();
-      oval.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-            .DEFAULT_HEIGHT);
+      oval.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
       canvas.addShape(oval);
       textCheck();
-      dataTable.addNewRow(oval.getModel());
       dirty = true;
    }
 
    private void addLine()
    {
       DLine line = new DLine();
-      line.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-            .DEFAULT_HEIGHT);
+      line.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
       canvas.addShape(line);
       textCheck();
-      dataTable.addNewRow(line.getModel());
       dirty = true;
    }
 
@@ -336,11 +317,9 @@ public class Whiteboard extends JFrame
       if (textBox.getText().isEmpty()) {return;}
       DText text = new DText();
       text.setFont(fontBox.getSelectedItem().toString());
-      text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-            .DEFAULT_HEIGHT);
+      text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
       text.setText(textBox.getText());
       canvas.addShape(text);
-      dataTable.addNewRow(text.getModel());
       dirty = true;
    }
 
@@ -523,7 +502,6 @@ public class Whiteboard extends JFrame
             clickedY = e.getY();
             if (moving) {canvas.moveSelected(dx, dy);}
             if (resizing) {canvas.resizeSelected(dx, dy);}
-            dataTable.updateRow(canvas.getSelected().getModel());
             dirty = true;
          }
       }
