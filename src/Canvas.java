@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that handles the canvas (drawing panel).
+ * Relates information to the server when changes are made to the canvas.
+ */
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
-   //static String default_port = "8001";
+   //Canvas elements
    static String default_port = "39587";
    static String default_host = "127.0.0.1";
    static String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
@@ -178,7 +182,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       if (model == null) {return;}
       addShape(DShape.getDShapeFromModel(model));
    }
-   
+
    /**
     * Moves the shape to the highest layer of the shapes that share a bounds.
     */
