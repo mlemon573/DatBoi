@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 public class DataTable extends AbstractTableModel
+        /**
+         * n. Create a subclass of AbstractTableModelthat responds to getValueAt() using the adapter pattern ­­ 
+         * pull the values dynamically out of the shape models. The table should show the shapes in the same order that the canvas has them,
+         * so the last shape in the canvas list will be the last row in the table. 
+         * Adding and removing shapes should add and remove rows in the table. Moving and resizing shapes should change the analogous ints in the table.
+         */
 {
     //Table elements
     public String[] columnNames;
