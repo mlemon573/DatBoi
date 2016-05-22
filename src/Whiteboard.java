@@ -29,6 +29,8 @@ public class Whiteboard extends JFrame
    private Canvas canvas;
    private JTable tableContainer;
    private JScrollPane scrollPane;
+   private JPanel isServerPanel;
+   private JPanel isClientPanel;
    // menu elements
    private JMenu menuFile;
    private JMenuItem menuFileNew;
@@ -155,11 +157,13 @@ public class Whiteboard extends JFrame
 
    private void startServer()
    {
+      isServerPanel.setVisible(true);
       canvas.startServer();
    }
 
    private void startClient()
    {
+      isClientPanel.setVisible(true);
       canvas.startClient();
       disableAllDaThings();
    }
@@ -182,8 +186,7 @@ public class Whiteboard extends JFrame
 
    private void confirmExit()
    {
-      // todo change to use isClient and isServer
-      ExitDialog dialog = new ExitDialog(this, dirty, false, false);
+      ExitDialog dialog = new ExitDialog(this, dirty, canvas.getMode());
       dialog.pack();
       dialog.setLocationRelativeTo(null);
       dialog.setVisible(true);
@@ -281,10 +284,7 @@ public class Whiteboard extends JFrame
             xmlOut.close();
             dirty = false;
          }
-         catch (Exception ex)
-         {
-            ex.printStackTrace();
-         }
+         catch (Exception e) {e.printStackTrace();}
          fileChooser.setEnabled(false);
       }
    }
@@ -438,43 +438,75 @@ public class Whiteboard extends JFrame
       textButton.setText("Text");
       panel3.add(textButton);
       final JPanel panel4 = new JPanel();
-      panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+      panel4.setLayout(new GridBagLayout());
+      panel3.add(panel4);
+      isServerPanel = new JPanel();
+      isServerPanel.setLayout(new GridBagLayout());
+      isServerPanel.setVisible(false);
       gbc = new GridBagConstraints();
       gbc.gridx = 0;
-      gbc.gridy = 1;
+      gbc.gridy = 0;
       gbc.fill = GridBagConstraints.BOTH;
-      panel2.add(panel4, gbc);
-      setColorButton = new JButton();
-      setColorButton.setText("Set Color");
-      panel4.add(setColorButton);
+      panel4.add(isServerPanel, gbc);
+      final JLabel label2 = new JLabel();
+      label2.setText("Server");
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      isServerPanel.add(label2, gbc);
+      isClientPanel = new JPanel();
+      isClientPanel.setLayout(new GridBagLayout());
+      isClientPanel.setVisible(false);
+      gbc = new GridBagConstraints();
+      gbc.gridx = 1;
+      gbc.gridy = 0;
+      gbc.fill = GridBagConstraints.BOTH;
+      panel4.add(isClientPanel, gbc);
+      final JLabel label3 = new JLabel();
+      label3.setText("Client");
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.anchor = GridBagConstraints.WEST;
+      isClientPanel.add(label3, gbc);
       final JPanel panel5 = new JPanel();
       panel5.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
       gbc = new GridBagConstraints();
       gbc.gridx = 0;
-      gbc.gridy = 2;
+      gbc.gridy = 1;
       gbc.fill = GridBagConstraints.BOTH;
       panel2.add(panel5, gbc);
-      textBox = new JTextField();
-      textBox.setPreferredSize(new Dimension(150, 31));
-      textBox.setText("Hello");
-      panel5.add(textBox);
-      panel5.add(fontBox);
+      setColorButton = new JButton();
+      setColorButton.setText("Set Color");
+      panel5.add(setColorButton);
       final JPanel panel6 = new JPanel();
       panel6.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
       gbc = new GridBagConstraints();
       gbc.gridx = 0;
-      gbc.gridy = 3;
+      gbc.gridy = 2;
       gbc.fill = GridBagConstraints.BOTH;
       panel2.add(panel6, gbc);
+      textBox = new JTextField();
+      textBox.setPreferredSize(new Dimension(150, 31));
+      textBox.setText("Hello");
+      panel6.add(textBox);
+      panel6.add(fontBox);
+      final JPanel panel7 = new JPanel();
+      panel7.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+      gbc = new GridBagConstraints();
+      gbc.gridx = 0;
+      gbc.gridy = 3;
+      gbc.fill = GridBagConstraints.BOTH;
+      panel2.add(panel7, gbc);
       moveToFrontButton = new JButton();
       moveToFrontButton.setText("Move To Front");
-      panel6.add(moveToFrontButton);
+      panel7.add(moveToFrontButton);
       moveToBackButton = new JButton();
       moveToBackButton.setText("Move To Back");
-      panel6.add(moveToBackButton);
+      panel7.add(moveToBackButton);
       removeShapeButton = new JButton();
       removeShapeButton.setText("Remove Shape");
-      panel6.add(removeShapeButton);
+      panel7.add(removeShapeButton);
       scrollPane.setHorizontalScrollBarPolicy(31);
       scrollPane.setPreferredSize(new Dimension(300, 200));
       scrollPane.setVisible(true);
@@ -510,10 +542,7 @@ public class Whiteboard extends JFrame
                moving = true;
             }
          }
-         else
-         {
-            findShape(e.getX(), e.getY());
-         }
+         else {findShape(e.getX(), e.getY());}
       }
    }
 

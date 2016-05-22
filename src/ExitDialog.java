@@ -22,15 +22,19 @@ public class ExitDialog extends JDialog
 
    /**
     * Constructor for the Exit Dialog
+    *
     * @param whiteboard - the whiteboard that is being exited from.
-    * @param dirty - whether or not something has been changed since it has been saved.
-    * @param isClient - whether or not the user is exiting as a client.
-    * @param isServer - whether or not the user is exiting as a server.
-     */
-   public ExitDialog(Whiteboard whiteboard, boolean dirty, boolean isClient, boolean isServer)
+    * @param dirty      - whether or not something has been changed since it has been
+    *                   saved.
+    * @param mode       - whether or not the user is exiting as a client or a server.
+    */
+   public ExitDialog(Whiteboard whiteboard, boolean dirty, String mode)
    {
       $$$setupUI$$$();
       this.whiteboard = whiteboard;
+
+      boolean isClient = "Client".equals(mode);
+      boolean isServer = "Server".equals(mode);
 
       panelDirty.setVisible(dirty);
       panelNotDirty.setVisible(!dirty);
@@ -67,9 +71,9 @@ public class ExitDialog extends JDialog
    /**
     * Closes the Exit Dialog frame.
     */
-   private void onCancel() 
-   { 
-      dispose(); 
+   private void onCancel()
+   {
+      dispose();
    }
 
    /**
