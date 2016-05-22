@@ -1,6 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.beans.XMLDecoder;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +31,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
    public void addShape(DShape shape)
    {
-      if (shape == null)
-      {
-         return;
-      }
+      if (shape == null) {return;}
       shapes.add(shape);
       shape.addListener(this);
       shape.setID(id++);
@@ -38,30 +39,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       repaint();
    }
 
-   public void addShapeFromModel(DShapeModel model)
+   public void addShape(DShapeModel model)
    {
-      DShape shape = null;
-      if (model instanceof DRectModel)
-      {
-         shape = new DRect();
-      }
-      else if (model instanceof DOvalModel)
-      {
-         shape = new DOval();
-      }
-      else if (model instanceof DLineModel)
-      {
-         shape = new DLine();
-      }
-      else if (model instanceof DTextModel)
-      {
-         shape = new DText();
-      }
-      if (shape != null && model != null)
-      {
-         shape.setModel(model);
-         addShape(shape);
-      }
+      if (model == null) {return;}
+      addShape(DShape.getDShapeFromModel(model));
    }
 
    public void removeSelected()
@@ -277,6 +258,56 @@ public class Canvas extends JPanel implements ModelListener, Serializable
                      .KNOB_SIZE);
             }
          }
+      }
+   }
+
+   public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
+   {
+      DShape old = null;
+      for (DShape shape : getShapesList())
+      {if (shape.getID() == newModel.getID()) {old = shape;}}
+   }
+
+   private class Client extends Thread
+   {
+      private String host;
+      private int port;
+
+      private Client(String host, int port)
+      {
+         this.host = host;
+         this.port = port;
+      }
+
+      @Override
+      public void run()
+      {
+         //todo define elsewhere later
+         String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
+         try
+         {
+            Socket serverSocket = new Socket(host, port);
+            ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
+            String objString = (String) ois.readObject();
+            ByteArrayInputStream ba = new ByteArrayInputStream(objString.getBytes());
+            XMLDecoder decoder = new XMLDecoder(ba);
+            DShapeModel[] models = (DShapeModel[]) decoder.readObject();
+            decoder.close();
+            for (DShapeModel model : models) {addShape(model);}
+
+            while (true)
+            {
+               String cmd = (String) ois.readObject();
+               objString = (String) ois.readObject();
+               decoder = new XMLDecoder(new ByteArrayInputStream(objString.getBytes()));
+               DShapeModel newModel = (DShapeModel) decoder.readObject();
+               decoder.close();
+
+               for (int i = 1; i < cmdList.length; i++)
+               {if (cmd.equals(cmdList[i])) {applyServerUpdate(i, newModel);}}
+            }
+         }
+         catch (Exception e) {e.printStackTrace();}
       }
    }
 }

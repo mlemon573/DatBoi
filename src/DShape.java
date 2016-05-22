@@ -11,8 +11,15 @@ public abstract class DShape
    static final int DEFAULT_HEIGHT = 20;
    private DShapeModel model;
 
-   public DShape()
+   public static DShape getDShapeFromModel(DShapeModel model)
    {
+      DShape shape = null;
+      if (model instanceof DRectModel) { shape = new DRect(); }
+      else if (model instanceof DOvalModel) { shape = new DOval(); }
+      else if (model instanceof DLineModel) { shape = new DLine(); }
+      else if (model instanceof DTextModel) { shape = new DText(); }
+      if (shape != null) {shape.setModel(model);}
+      return shape;
    }
 
    public int getX()
