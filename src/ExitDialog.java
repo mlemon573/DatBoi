@@ -4,8 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * A dialog screen for controlling whether or not the Whiteboard is closed.
+ */
 public class ExitDialog extends JDialog
 {
+   //GUI elements
    private JPanel contentPane;
    private JButton buttonYes;
    private JButton buttonNo;
@@ -16,6 +20,13 @@ public class ExitDialog extends JDialog
 
    private Whiteboard whiteboard;
 
+   /**
+    * Constructor for the Exit Dialog
+    * @param whiteboard - the whiteboard that is being exited from.
+    * @param dirty - whether or not something has been changed since it has been saved.
+    * @param isClient - whether or not the user is exiting as a client.
+    * @param isServer - whether or not the user is exiting as a server.
+     */
    public ExitDialog(Whiteboard whiteboard, boolean dirty, boolean isClient, boolean isServer)
    {
       $$$setupUI$$$();
@@ -44,15 +55,21 @@ public class ExitDialog extends JDialog
 
    }
 
+   /**
+    * Closes the Whiteboard frame.
+    */
    private void onOK()
    {
       whiteboard.dispose();
       dispose();
    }
 
-   private void onCancel()
-   {
-      dispose();
+   /**
+    * Closes the Exit Dialog frame.
+    */
+   private void onCancel() 
+   { 
+      dispose(); 
    }
 
    /**
