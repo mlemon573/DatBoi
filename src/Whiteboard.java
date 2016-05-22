@@ -38,8 +38,8 @@ public class Whiteboard extends JFrame
    private JMenuItem menuFileSaveXml;
    private JMenuItem menuFileExit;
    private JMenu menuNetwork;
-   private JMenuItem startServer;
-   private JMenuItem startClient;
+   private JMenuItem menuNetworkStartServer;
+   private JMenuItem menuNetworkJoinServer;
    // instance variables
    private int clickedX;
    private int clickedY;
@@ -73,15 +73,16 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
+            .CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
       menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
-				.CTRL_MASK));
+            .CTRL_MASK));
       menuFileOpen.setMnemonic('o');
       menuFileSave = new JMenu("Save");
       menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent
-				.CTRL_MASK));
+            .CTRL_MASK));
       menuFileSave.setMnemonic('s');
       menuFileSavePng = new JMenuItem("PNG");
       menuFileSavePng.setMnemonic('p');
@@ -91,7 +92,7 @@ public class Whiteboard extends JFrame
       menuFileSave.add(menuFileSaveXml);
       menuFileExit = new JMenuItem("Exit");
       menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
-				.CTRL_MASK));
+            .CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
@@ -103,16 +104,16 @@ public class Whiteboard extends JFrame
 
       menuNetwork = new JMenu("Network");
       menuNetwork.setMnemonic('n');
-      startServer = new JMenuItem("Start Server");
-      startServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent
-				.ALT_MASK));
-      startServer.setMnemonic('s');
-      startClient = new JMenuItem("Start Client");
-      startClient.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent
-				.ALT_MASK));
-      startClient.setMnemonic('c');
-      menuNetwork.add(startServer);
-      menuNetwork.add(startClient);
+      menuNetworkStartServer = new JMenuItem("Start Server");
+      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+            InputEvent.ALT_MASK));
+      menuNetworkStartServer.setMnemonic('s');
+      menuNetworkJoinServer = new JMenuItem("Join Server");
+      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+            InputEvent.ALT_MASK));
+      menuNetworkJoinServer.setMnemonic('c');
+      menuNetwork.add(menuNetworkStartServer);
+      menuNetwork.add(menuNetworkJoinServer);
       menuBar.add(menuNetwork);
    }
 
@@ -131,6 +132,8 @@ public class Whiteboard extends JFrame
       moveToFrontButton.addActionListener(e -> moveToFront());
       moveToBackButton.addActionListener(e -> moveToBack());
       removeShapeButton.addActionListener(e -> removeSelected());
+      menuNetworkStartServer.addActionListener(e -> canvas.startServer());
+      menuNetworkJoinServer.addActionListener(e -> canvas.startClient());
       textBox.addKeyListener(new TextChangeListener());
       fontBox.addActionListener(e -> setSelectedFont());
       canvas.addMouseListener(new CanvasListener());
@@ -222,7 +225,7 @@ public class Whiteboard extends JFrame
             {
                XMLDecoder xmlIn =
                      new XMLDecoder(new BufferedInputStream(new FileInputStream
-									(fileToOpen)));
+                           (fileToOpen)));
                DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
                xmlIn.close();
                canvas.clear();
@@ -299,7 +302,7 @@ public class Whiteboard extends JFrame
    {
       DRect rect = new DRect();
       rect.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-				.DEFAULT_HEIGHT);
+            .DEFAULT_HEIGHT);
       canvas.addShape(rect);
       textCheck();
       dataTable.addNewRow(rect.getModel());
@@ -310,7 +313,7 @@ public class Whiteboard extends JFrame
    {
       DOval oval = new DOval();
       oval.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-				.DEFAULT_HEIGHT);
+            .DEFAULT_HEIGHT);
       canvas.addShape(oval);
       textCheck();
       dataTable.addNewRow(oval.getModel());
@@ -321,7 +324,7 @@ public class Whiteboard extends JFrame
    {
       DLine line = new DLine();
       line.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-				.DEFAULT_HEIGHT);
+            .DEFAULT_HEIGHT);
       canvas.addShape(line);
       textCheck();
       dataTable.addNewRow(line.getModel());
@@ -334,7 +337,7 @@ public class Whiteboard extends JFrame
       DText text = new DText();
       text.setFont(fontBox.getSelectedItem().toString());
       text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape
-				.DEFAULT_HEIGHT);
+            .DEFAULT_HEIGHT);
       text.setText(textBox.getText());
       canvas.addShape(text);
       dataTable.addNewRow(text.getModel());

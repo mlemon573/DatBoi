@@ -1,19 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
 import java.beans.XMLDecoder;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.beans.XMLEncoder;
+import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
+   static String default_port = "8001";
+   static String default_host = "127.0.0.1";
+
    private List<DShape> shapes;
    private DShape selected;
    private int sKnob;
    private int id;
+   private List<ObjectOutputStream> outputStreamList;
+   private String mode;
+   private Client client;
+   private Server server;
 
    public Canvas()
    {
@@ -26,6 +33,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       this.setOpaque(true);
       this.setBackground(Color.white);
       shapes = new ArrayList<>();
+      outputStreamList = new ArrayList<>();
       id = 1;
    }
 
@@ -261,11 +269,87 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
+   public DShape getShapeByID(int id)
+   {
+      for (DShape shape : getShapesList()) {if (shape.getID() == id) {return shape;}}
+      return null;
+   }
+
    public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
    {
-      DShape old = null;
-      for (DShape shape : getShapesList())
-      {if (shape.getID() == newModel.getID()) {old = shape;}}
+      DShape old = getShapeByID(newModel.getID());
+      if (cmdCode != 1 && old == null)
+      {
+         System.out.println("Sync Failed!");
+      }
+      else if (cmdCode == 1)
+      {
+         addShape(newModel);
+      }
+      else if (cmdCode == 2)
+      {
+         setSelected(old);
+         removeSelected();
+      }
+      else if (cmdCode == 3)
+      {
+         setSelected(old);
+         moveToFront();
+      }
+      else if (cmdCode == 4)
+      {
+         setSelected(old);
+         moveToBack();
+      }
+      else if (cmdCode == 5)
+      {
+         setSelected(old);
+         removeSelected();
+         addShape(newModel);
+      }
+   }
+
+   public synchronized void sendAllToRemote(ObjectOutputStream out)
+   {
+      OutputStream output = new ByteArrayOutputStream();
+      XMLEncoder encoder = new XMLEncoder(output);
+      DShapeModel[] models = new DShapeModel[shapes.size()];
+      for (int i = 0; i < shapes.size(); i++) {models[i] = shapes.get(i).getModel();}
+      encoder.writeObject(models);
+      encoder.close();
+      String xmlString = output.toString();
+      try
+      {
+         out.writeObject(xmlString);
+         out.flush();
+      }
+      catch (Exception e) {e.printStackTrace();}
+   }
+
+   public void startServer()
+   {
+      mode = "Server";
+      String result = JOptionPane.showInputDialog("Run server on port", default_port);
+      if (result != null)
+      {
+         System.out.println("server: start");
+         server = new Server(Integer.parseInt(result));
+         server.start();
+      }
+   }
+
+   public void startClient()
+   {
+      mode = "Client";
+      String result = JOptionPane.showInputDialog("Connect to host:port",
+            default_host + ":" + default_port);
+      if (result != null)
+      {
+         String[] res = result.split(":");
+         System.out.println("client: start");
+         client = new Client(res[0], Integer.parseInt(res[1]));
+         client.start();
+      }
    }
 
    private class Client extends Thread
@@ -305,6 +389,36 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
                for (int i = 1; i < cmdList.length; i++)
                {if (cmd.equals(cmdList[i])) {applyServerUpdate(i, newModel);}}
+            }
+         }
+         catch (Exception e) {e.printStackTrace();}
+      }
+   }
+
+   private class Server extends Thread
+   {
+      private int port;
+
+      Server(int port)
+      {
+         this.port = port;
+      }
+
+      @Override
+      public void run()
+      {
+         try
+         {
+            ServerSocket server = new ServerSocket(port);
+
+            while (true)
+            {
+               Socket toClient = server.accept();
+               System.out.println("server: client connected");
+               ObjectOutputStream newOut =
+                     new ObjectOutputStream(toClient.getOutputStream());
+               sendAllToRemote(newOut);
+               outputStreamList.add(newOut);
             }
          }
          catch (Exception e) {e.printStackTrace();}
