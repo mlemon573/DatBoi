@@ -19,9 +19,10 @@ public class ClearDialog extends JDialog
 
    /**
     * Constructor for the Clear Dialog.
-    * @param canvas -  the canvas to be cleared of all elements.
+    *
+    * @param canvas    -  the canvas to be cleared of all elements.
     * @param dataTable - the data table to be cleared of all elements.
-     */
+    */
    public ClearDialog(Canvas canvas, DataTable dataTable)
    {
       $$$setupUI$$$();
@@ -42,7 +43,8 @@ public class ClearDialog extends JDialog
          public void windowClosing(WindowEvent e) {onCancel();}
       });
 
-      contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke
+            (KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
    }
 

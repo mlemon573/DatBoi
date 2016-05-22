@@ -14,7 +14,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    private int sKnob;
    private int id;
    private DataTable dataTable;
-   private String mode;
+   private String mode = "";
    private Client client;
    private Server server;
 
@@ -91,14 +91,14 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       repaint();
    }
 
-   public void setSelectedKnob(Rectangle rect)
+   public void setSelectedKnob(Point point)
    {
-      List<Rectangle> knobs = selected.getKnobs();
+      List<Point> knobs = selected.getKnobs();
       boolean set = false;
       for (int i = 0; i < knobs.size(); i++)
       {
-         Rectangle r = knobs.get(i);
-         if (r != null && r.equals(rect))
+         Point p = knobs.get(i);
+         if (p != null && p.equals(point))
          {
             setSelectedKnob(i);
             set = true;
@@ -160,9 +160,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
-   public Rectangle findKnob(int x, int y)
+   public Point findKnob(int x, int y)
    {
-      for (Rectangle knob : selected.getKnobs())
+      for (Point knob : selected.getKnobs())
       {
          if (knob != null && x >= knob.getX() && x <= knob.getX() + DShape.KNOB_SIZE
                && y >= knob.getY() && y <= knob.getY() + DShape.KNOB_SIZE) {return knob;}
@@ -248,16 +248,16 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       if (selected != null)
       {
-         for (Rectangle r : selected.getKnobs())
+         for (Point p : selected.getKnobs())
          {
-            if (r != null)
+            if (p != null)
             {
                g.setColor(Color.WHITE);
-               g.fillRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
+               g.fillRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
                      .KNOB_SIZE);
 
                g.setColor(Color.BLACK);
-               g.drawRect((int) r.getX(), (int) r.getY(), DShape.KNOB_SIZE, DShape
+               g.drawRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
                      .KNOB_SIZE);
             }
          }
@@ -272,10 +272,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
    void startServer()
    {
-      mode = "Server";
       String result = JOptionPane.showInputDialog("Run server on port", default_port);
       if (result != null)
       {
+         mode = "Server";
          System.out.println("server: start");
          server = new Server(Integer.parseInt(result));
          server.setCanvas(this);
@@ -283,18 +283,19 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
-   void startClient()
+   void startClient(Whiteboard whiteboard)
    {
-      mode = "Client";
       String result = JOptionPane.showInputDialog("Connect to host:port",
             default_host + ":" + default_port);
       if (result != null)
       {
+         mode = "Client";
          String[] res = result.split(":");
          System.out.println("client: start");
          client = new Client(res[0], Integer.parseInt(res[1]));
          client.setCanvas(this);
          client.start();
+         whiteboard.disableAllDaThings();
       }
    }
 }

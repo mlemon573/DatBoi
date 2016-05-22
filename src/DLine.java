@@ -21,10 +21,11 @@ public class DLine extends DShape
 
    /**
     * Overrides the getKnobs method of the DShape class to work for a DLine.
+    *
     * @return knobs - the knobs used for a DLine.
-     */
+    */
    @Override
-   public List<Rectangle> getKnobs()
+   public List<Point> getKnobs()
    {
       this.invertX = ((DLineModel) this.getModel()).getInvertX();
       this.invertY = ((DLineModel) this.getModel()).getInvertY();
@@ -32,22 +33,19 @@ public class DLine extends DShape
       int baseY = getY() - (KNOB_SIZE / 2);
       int width = getWidth();
       int height = getHeight();
-      List<Rectangle> knobs = new ArrayList<>();
-      knobs.add(invertX != invertY ? null : new Rectangle(
-            baseX - 1, baseY, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(invertX == invertY ? null : new Rectangle(
-            baseX - 1 + width, baseY, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(invertX == invertY ? null : new Rectangle(
-            baseX - 1, baseY + height, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(invertX != invertY ? null : new Rectangle(
-            baseX - 1 + width, baseY + height, KNOB_SIZE, KNOB_SIZE));
+      List<Point> knobs = new ArrayList<>();
+      knobs.add(invertX != invertY ? null : new Point(baseX - 1, baseY));
+      knobs.add(invertX == invertY ? null : new Point(baseX - 1 + width, baseY));
+      knobs.add(invertX == invertY ? null : new Point(baseX - 1, baseY + height));
+      knobs.add(invertX != invertY ? null : new Point(baseX - 1 + width, baseY + height));
       return knobs;
    }
 
    /**
     * Method to draw the line with a a respective color, size, and position.
+    *
     * @param g - the graphic to draw.
-     */
+    */
    public void draw(Graphics g)
    {
       this.invertX = ((DLineModel) this.getModel()).getInvertX();

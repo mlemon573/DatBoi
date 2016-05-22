@@ -46,7 +46,7 @@ public class Server extends Thread
       catch (Exception e) {e.printStackTrace();}
    }
 
-   public synchronized void sendAllToClient(ObjectOutputStream out)
+   private synchronized void sendAllToClient(ObjectOutputStream out)
    {
       OutputStream output = new ByteArrayOutputStream();
       XMLEncoder encoder = new XMLEncoder(output);
@@ -64,7 +64,7 @@ public class Server extends Thread
       catch (Exception e) {e.printStackTrace();}
    }
 
-   public synchronized void sendToAllClients(int cmdIndex, DShapeModel target)
+   synchronized void sendToAllClients(int cmdIndex, DShapeModel target)
    {
       if (!"Server".equals(canvas.getMode())) {return;}
       OutputStream output = new ByteArrayOutputStream();

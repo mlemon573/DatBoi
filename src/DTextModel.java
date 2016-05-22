@@ -21,8 +21,9 @@ public class DTextModel extends DShapeModel
 
    /**
     * Getter method for the text of DTextModel.
+    *
     * @return this.text - the text of the DTextModel.
-     */
+    */
    public String getText()
    {
       return this.text;
@@ -30,8 +31,9 @@ public class DTextModel extends DShapeModel
 
    /**
     * Setter method for DTextModel.
+    *
     * @param text - the text to set.
-     */
+    */
    public void setText(String text)
    {
       this.text = text;
@@ -40,8 +42,9 @@ public class DTextModel extends DShapeModel
 
    /**
     * Getter method for the font of DTextModel.
+    *
     * @return thisfont - the font of the DTextModel.
-     */
+    */
    public String getFont()
    {
       return this.font;
@@ -49,6 +52,7 @@ public class DTextModel extends DShapeModel
 
    /**
     * Setter method for the font of the DTextModel.
+    *
     * @param font - the text to set.
     */
    public void setFont(String font)

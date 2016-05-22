@@ -58,7 +58,7 @@ class Client extends Thread
       catch (Exception e) {e.printStackTrace();}
    }
 
-   public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
+   private synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
    {
       DShape old = canvas.getShapeByID(newModel.getID());
       if (cmdCode != 1 && old == null)

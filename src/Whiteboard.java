@@ -57,7 +57,7 @@ public class Whiteboard extends JFrame
       $$$setupUI$$$();
       canvas.setDataTable(dataTable);
       buildMenu();
-      buildButtonListeners();
+      addListeners();
    }
 
    public static void main(String[] args)
@@ -65,7 +65,7 @@ public class Whiteboard extends JFrame
       Whiteboard whiteboard = new Whiteboard();
       whiteboard.setTitle("Whiteboard");
       whiteboard.setContentPane(whiteboard.whiteboardPanel);
-      whiteboard.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+      whiteboard.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
       whiteboard.pack();
       whiteboard.setLocationRelativeTo(null);
       whiteboard.setVisible(true);
@@ -104,37 +104,41 @@ public class Whiteboard extends JFrame
       menuNetwork = new JMenu("Network");
       menuNetwork.setMnemonic('n');
       menuNetworkStartServer = new JMenuItem("Start Server");
-      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
-      menuNetworkStartServer.setMnemonic('s');
+      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
+      menuNetworkStartServer.setMnemonic('t');
       menuNetworkJoinServer = new JMenuItem("Join Server");
-      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
+      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
       menuNetworkJoinServer.setMnemonic('c');
       menuNetwork.add(menuNetworkStartServer);
       menuNetwork.add(menuNetworkJoinServer);
       menuBar.add(menuNetwork);
    }
 
-   private void buildButtonListeners()
+   private void addListeners()
    {
-      setColorButton.addActionListener(e -> setSelectedColor());
-      menuFileSavePng.addActionListener(e -> savePng());
-      menuFileSaveXml.addActionListener(e -> saveXml());
       rectButton.addActionListener(e -> addRect());
       ovalButton.addActionListener(e -> addOval());
       lineButton.addActionListener(e -> addLine());
       textButton.addActionListener(e -> addText());
-      menuFileOpen.addActionListener(e -> openFile());
-      menuFileNew.addActionListener(e -> clearCanvas());
-      menuFileExit.addActionListener(e -> confirmExit());
+      setColorButton.addActionListener(e -> setSelectedColor());
+      textBox.addKeyListener(new TextChangeListener());
+      fontBox.addActionListener(e -> setSelectedFont());
       moveToFrontButton.addActionListener(e -> moveToFront());
       moveToBackButton.addActionListener(e -> moveToBack());
       removeShapeButton.addActionListener(e -> removeSelected());
+      menuFileSavePng.addActionListener(e -> savePng());
+      menuFileSaveXml.addActionListener(e -> saveXml());
+      menuFileOpen.addActionListener(e -> openFile());
+      menuFileNew.addActionListener(e -> clearCanvas());
+      menuFileExit.addActionListener(e -> confirmExit());
       menuNetworkStartServer.addActionListener(e -> startServer());
       menuNetworkJoinServer.addActionListener(e -> startClient());
-      textBox.addKeyListener(new TextChangeListener());
-      fontBox.addActionListener(e -> setSelectedFont());
       canvas.addMouseListener(new CanvasListener());
       canvas.addMouseMotionListener(new CanvasMotionListener());
+      this.addWindowListener(new WindowAdapter()
+      {
+         public void windowClosing(WindowEvent e) {confirmExit();}
+      });
    }
 
    private void moveToFront()
@@ -157,31 +161,20 @@ public class Whiteboard extends JFrame
 
    private void startServer()
    {
-      isServerPanel.setVisible(true);
-      canvas.startServer();
+      if (canvas.getMode().equals(""))
+      {
+         isServerPanel.setVisible(true);
+         canvas.startServer();
+      }
    }
 
    private void startClient()
    {
-      isClientPanel.setVisible(true);
-      canvas.startClient();
-      disableAllDaThings();
-   }
-
-   private void disableAllDaThings()
-   {
-      rectButton.setEnabled(false);
-      ovalButton.setEnabled(false);
-      lineButton.setEnabled(false);
-      textButton.setEnabled(false);
-      setColorButton.setEnabled(false);
-      textBox.setEnabled(false);
-      fontBox.setEnabled(false);
-      moveToFrontButton.setEnabled(false);
-      moveToBackButton.setEnabled(false);
-      removeShapeButton.setEnabled(false);
-      canvas.setEnabled(false);
-      tableContainer.setEnabled(false);
+      if (canvas.getMode().equals(""))
+      {
+         isClientPanel.setVisible(true);
+         canvas.startClient(this);
+      }
    }
 
    private void confirmExit()
@@ -198,6 +191,57 @@ public class Whiteboard extends JFrame
       dialog.pack();
       dialog.setLocationRelativeTo(null);
       dialog.setVisible(true);
+   }
+
+   private void addRect()
+   {
+      DRect rect = new DRect();
+      canvas.addShape(rect);
+      textCheck();
+      dirty = true;
+   }
+
+   private void addOval()
+   {
+      DOval oval = new DOval();
+      canvas.addShape(oval);
+      textCheck();
+      dirty = true;
+   }
+
+   private void addLine()
+   {
+      DLine line = new DLine();
+      canvas.addShape(line);
+      textCheck();
+      dirty = true;
+   }
+
+   private void addText()
+   {
+      if (textBox.getText().isEmpty()) {return;}
+      DText text = new DText();
+      text.setFont(fontBox.getSelectedItem().toString());
+      text.setText(textBox.getText());
+      canvas.addShape(text);
+      dirty = true;
+   }
+
+
+   void disableAllDaThings()
+   {
+      rectButton.setEnabled(false);
+      ovalButton.setEnabled(false);
+      lineButton.setEnabled(false);
+      textButton.setEnabled(false);
+      setColorButton.setEnabled(false);
+      textBox.setEnabled(false);
+      fontBox.setEnabled(false);
+      moveToFrontButton.setEnabled(false);
+      moveToBackButton.setEnabled(false);
+      removeShapeButton.setEnabled(false);
+      canvas.setEnabled(false);
+      tableContainer.setEnabled(false);
    }
 
    private void savePng()
@@ -309,44 +353,6 @@ public class Whiteboard extends JFrame
          text.setFont(fontBox.getSelectedItem().toString());
          text.setBounds(text.getX(), text.getY(), text.getWidth(), text.getHeight());
       }
-      dirty = true;
-   }
-
-   private void addRect()
-   {
-      DRect rect = new DRect();
-      rect.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
-      canvas.addShape(rect);
-      textCheck();
-      dirty = true;
-   }
-
-   private void addOval()
-   {
-      DOval oval = new DOval();
-      oval.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
-      canvas.addShape(oval);
-      textCheck();
-      dirty = true;
-   }
-
-   private void addLine()
-   {
-      DLine line = new DLine();
-      line.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
-      canvas.addShape(line);
-      textCheck();
-      dirty = true;
-   }
-
-   private void addText()
-   {
-      if (textBox.getText().isEmpty()) {return;}
-      DText text = new DText();
-      text.setFont(fontBox.getSelectedItem().toString());
-      text.setBounds(DShape.DEFAULT_X, DShape.DEFAULT_Y, DShape.DEFAULT_WIDTH, DShape.DEFAULT_HEIGHT);
-      text.setText(textBox.getText());
-      canvas.addShape(text);
       dirty = true;
    }
 
@@ -528,7 +534,7 @@ public class Whiteboard extends JFrame
          clickedY = e.getY();
          if (canvas.getSelected() != null && !"Client".equals(canvas.getMode()))
          {
-            Rectangle knob = canvas.findKnob(clickedX, clickedY);
+            Point knob = canvas.findKnob(clickedX, clickedY);
             canvas.setSelectedKnob(knob);
             if (knob != null)
             {

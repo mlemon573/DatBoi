@@ -6,17 +6,14 @@ public abstract class DShape
 {
    //Default values for a shape.
    static final int KNOB_SIZE = 9;
-   static final int DEFAULT_X = 10;
-   static final int DEFAULT_Y = 10;
-   static final int DEFAULT_WIDTH = 20;
-   static final int DEFAULT_HEIGHT = 20;
    private DShapeModel model;
 
    /**
     * Getter method for DShape.
+    *
     * @param model - the model to check the type of.
     * @return shape - the type of DShapeModel.
-     */
+    */
    public static DShape getDShapeFromModel(DShapeModel model)
    {
       DShape shape = null;
@@ -30,8 +27,9 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the x coordinate of a given model.
-     */
+    */
    public int getX()
    {
       return model.getX();
@@ -47,6 +45,7 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the y coordinate of a given model.
     */
    public int getY()
@@ -64,6 +63,7 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the width of a given model.
     */
    public int getWidth()
@@ -81,6 +81,7 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the height of a given model.
     */
    public int getHeight()
@@ -98,6 +99,7 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the color of a given model.
     */
    public Color getColor()
@@ -115,6 +117,7 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the ID of a given model.
     */
    public int getID()
@@ -132,11 +135,12 @@ public abstract class DShape
 
    /**
     * Setter method for the bounds of a model.
-    * @param x - the x coordinate.
-    * @param y - the y coordinate.
-    * @param width - the width of the shape.
+    *
+    * @param x      - the x coordinate.
+    * @param y      - the y coordinate.
+    * @param width  - the width of the shape.
     * @param height - the height of the shape.
-     */
+    */
    public void setBounds(int x, int y, int width, int height)
    {
       model.setBounds(x, y, width, height);
@@ -144,8 +148,9 @@ public abstract class DShape
 
    /**
     * Getter method for the bounds of a Rectangle.
+    *
     * @return the bounds of the model casted as a rectangle.
-     */
+    */
    public Rectangle getBounds()
    {
       return (Rectangle) model.getBounds().clone();
@@ -153,9 +158,10 @@ public abstract class DShape
 
    /**
     * Tests the equality of a shape to a model.
+    *
     * @param shape - the shape to test the validity of.
     * @return whether or not the shape is not null and the models of the shape are equal.
-     */
+    */
    public boolean equals(DShape shape)
    {
       return shape != null && this.model.equals(shape.getModel());
@@ -163,9 +169,10 @@ public abstract class DShape
 
    /**
     * Method to move the shape by a given amount.
+    *
     * @param dx - the x coordinate amount to move the shape by.
     * @param dy - the y coordinate amount to move the shape by.
-     */
+    */
    public void moveBy(int dx, int dy)
    {
       this.model.moveBy(dx, dy);
@@ -173,8 +180,9 @@ public abstract class DShape
 
    /**
     * Getter method for DShape.
+    *
     * @return the model of a given shape.
-     */
+    */
    public DShapeModel getModel()
    {
       return this.model;
@@ -190,8 +198,9 @@ public abstract class DShape
 
    /**
     * Adds a listener to a model.
+    *
     * @param listener - the listener to add to a model.
-     */
+    */
    public void addListener(ModelListener listener)
    {
       model.addListener(listener);
@@ -199,25 +208,28 @@ public abstract class DShape
 
    /**
     * Method to draw a given shape.
+    *
     * @param g - the graphic to draw.
-     */
+    */
    abstract void draw(Graphics g);
 
    /**
     * Getter method for the DShape.
+    *
     * @return - the knobs of the shape implemented as rectangles.
-     */
-   List<Rectangle> getKnobs()
+    */
+   List<Point> getKnobs()
    {
       int baseX = getX() - (KNOB_SIZE / 2);
       int baseY = getY() - (KNOB_SIZE / 2);
       int width = getWidth();
       int height = getHeight();
-      List<Rectangle> knobs = new ArrayList<>();
-      knobs.add(new Rectangle(baseX - 1, baseY, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(baseX - 1 + width, baseY, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(baseX - 1, baseY + height, KNOB_SIZE, KNOB_SIZE));
-      knobs.add(new Rectangle(baseX - 1 + width, baseY + height, KNOB_SIZE, KNOB_SIZE));
+
+      List<Point> knobs = new ArrayList<>();
+      knobs.add(new Point(baseX - 1, baseY));
+      knobs.add(new Point(baseX - 1 + width, baseY));
+      knobs.add(new Point(baseX - 1, baseY + height));
+      knobs.add(new Point(baseX - 1 + width, baseY + height));
       return knobs;
    }
 }

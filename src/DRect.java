@@ -15,6 +15,7 @@ public class DRect extends DShape
 
    /**
     * Method to draw the rectangle with a respective position, size, and color.
+    *
     * @param g - the graphic to draw.
     */
    public void draw(Graphics g)

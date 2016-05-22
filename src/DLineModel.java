@@ -1,7 +1,8 @@
 /**
  * Model class for the DLine class.
  * To keep track of all the numerical information and properties of the respective shape.
- * To keep track of whether or not a line is inverted on the canvas and adjust it relatively.
+ * To keep track of whether or not a line is inverted on the canvas and adjust it
+ * relatively.
  */
 public class DLineModel extends DShapeModel
 {
@@ -35,8 +36,9 @@ public class DLineModel extends DShapeModel
 
    /**
     * Getter method for the invertX boolean.
+    *
     * @return invertX - whether or not invertX is true or false.
-     */
+    */
    public boolean getInvertX()
    {
       return invertX;
@@ -52,6 +54,7 @@ public class DLineModel extends DShapeModel
 
    /**
     * Getter method for the invertY boolean.
+    *
     * @return invertY - whether or not invertY is true or false.
     */
    public boolean getInvertY()
