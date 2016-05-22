@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Server class that handles changes. Utilizes threads for utilizing changes/sending them to the clients.
+ * Server class that handles changes. Utilizes threads for utilizing changes/sending
+ * them to the clients.
  */
 class Server extends Thread
 {
@@ -20,8 +21,9 @@ class Server extends Thread
 
    /**
     * Constructor for the server.
+    *
     * @param port - the port to set the server onto.
-     */
+    */
    Server(int port)
    {
       this.port = port;
@@ -30,8 +32,9 @@ class Server extends Thread
 
    /**
     * Setter method to set the canvas with respect to the server.
+    *
     * @param canvas - the canvas to utilize in the server.
-     */
+    */
    public void setCanvas(Canvas canvas)
    {
       this.canvas = canvas;
@@ -62,8 +65,9 @@ class Server extends Thread
 
    /**
     * Sends changes to the client.
+    *
     * @param out - the data bits to send.
-     */
+    */
    private synchronized void sendAllToClient(ObjectOutputStream out)
    {
       OutputStream output = new ByteArrayOutputStream();
@@ -84,9 +88,10 @@ class Server extends Thread
 
    /**
     * Sends changes to the client.
+    *
     * @param cmdIndex - the type of changed that has occured.
-    * @param target - the shape that has been changed.
-     */
+    * @param target   - the shape that has been changed.
+    */
    synchronized void sendToAllClients(int cmdIndex, DShapeModel target)
    {
       if (!"Server".equals(canvas.getMode())) {return;}
