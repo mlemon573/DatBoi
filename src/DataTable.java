@@ -1,17 +1,20 @@
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Subclass of the AbstractTableModel.
  * Utilizing the adapter pattern, we dynamically pull the properties of the shape models.
- * The DataTable will show the shapes in the same order as the user has placed them on canvas.
- * Adding and removing shapes will alter the table by adding or removing their respective rows.
+ * The DataTable will show the shapes in the same order as the user has placed them on
+ * canvas.
+ * Adding and removing shapes will alter the table by adding or removing their
+ * respective rows.
  */
 public class DataTable extends AbstractTableModel
 {
    //Table elements
    public String[] columnNames;
-   public ArrayList<DShapeModel> dataModels;
+   public List<DShapeModel> dataModels;
 
    /**
     * Constructor for the Data Table.
@@ -19,36 +22,40 @@ public class DataTable extends AbstractTableModel
     */
    public DataTable()
    {
-      dataModels = new ArrayList<>();
+      dataModels = new LinkedList<>();
       columnNames = new String[]{"X", "Y", "Width", "Height"};
    }
 
    /**
     * Overrides the getRowCount method of the AbstractTableModel.
+    *
     * @return dataModels.size - the total amount of objects that are on the screen.
-     */
+    */
    @Override
-   public int getRowCount() 
-   { 
-      return dataModels.size(); 
+   public int getRowCount()
+   {
+      return dataModels.size();
    }
 
    /**
     * Overrides the getColumnCount method of the AbstractTableModel.
+    *
     * @return columnNames.length - the total amount of columns (a fixed value of 4).
-     */
+    */
    @Override
-   public int getColumnCount() 
-   { 
-      return columnNames.length; 
+   public int getColumnCount()
+   {
+      return columnNames.length;
    }
 
    /**
     * Overrides the getValueAt method of the AbstractTableModel.
+    *
     * @param selectedShape - the DShape that is selected on the canvas.
-    * @param property - the x coordinate, y coordinate, width, or height of the selected shape.
+    * @param property      - the x coordinate, y coordinate, width, or height of the
+    *                      selected shape.
     * @return the selected shape's respective property.
-     */
+    */
    @Override
    public Object getValueAt(int selectedShape, int property)
    {
@@ -68,9 +75,10 @@ public class DataTable extends AbstractTableModel
 
    /**
     * Overrides the getColumnName method of the AbstractTableModel.
+    *
     * @param col - the column index in the array of column names.
     * @return columnNames[col] - the name of the column.
-     */
+    */
    @Override
    public String getColumnName(int col)
    {
@@ -88,18 +96,20 @@ public class DataTable extends AbstractTableModel
 
    /**
     * Adds a new row to the table.
+    *
     * @param shapeToAdd - the newly constructed shape to add.
-     */
+    */
    public void addNewRow(DShapeModel shapeToAdd)
    {
-      dataModels.add(shapeToAdd);
+      dataModels.add(0, shapeToAdd);
       fireTableDataChanged();
    }
 
    /**
     * Updates the rows from the table when a change occurs.
+    *
     * @param shapeModel - the DShapeModel that has been changed.
-     */
+    */
    public void updateRow(DShapeModel shapeModel)
    {
       //Finds the specific index of the table to change
@@ -116,8 +126,9 @@ public class DataTable extends AbstractTableModel
 
    /**
     * Removes a row from the table when a shape is removed.
+    *
     * @param shapeToRemove - the shape to remove from the table.
-     */
+    */
    public void removeRow(DShapeModel shapeToRemove)
    {
       //Finds the specific index of the table to change
@@ -134,8 +145,9 @@ public class DataTable extends AbstractTableModel
 
    /**
     * Moves a row up when a shape is move to the front layer on the canvas.
+    *
     * @param shapeChanged - the shape's row to move up the table.
-     */
+    */
    public void moveRowUp(DShapeModel shapeChanged)
    {
       //Finds the specific index of the table to change
@@ -143,10 +155,10 @@ public class DataTable extends AbstractTableModel
       {
          if (dataModels.get(i).getID() == shapeChanged.getID())
          {
-            DShapeModel tempModel = dataModels.get(i);
-            dataModels.set(i, dataModels.get(i - 1));
-            dataModels.set(i - 1, tempModel);
-            fireTableCellUpdated(i - 1, i);
+            DShapeModel tempModel = dataModels.remove(i);
+            dataModels.add(0, tempModel);
+            fireTableRowsUpdated(0, 0);
+            fireTableRowsUpdated(i, i);
             break;
          }
       }
@@ -154,8 +166,9 @@ public class DataTable extends AbstractTableModel
 
    /**
     * Moves a row down when a shape is moved to the bottom layer on the canvas.
+    *
     * @param shapeChanged - the shape's row to move down the table.
-     */
+    */
    public void moveRowDown(DShapeModel shapeChanged)
    {
       //Finds the specific index of the table to change
@@ -163,10 +176,10 @@ public class DataTable extends AbstractTableModel
       {
          if (dataModels.get(i).getID() == shapeChanged.getID())
          {
-            DShapeModel tempModel = dataModels.get(i);
-            dataModels.set(i, dataModels.get(i + 1));
-            dataModels.set(i + 1, tempModel);
-            fireTableCellUpdated(i, i + 1);
+            DShapeModel tempModel = dataModels.remove(i);
+            dataModels.add(tempModel);
+            fireTableRowsUpdated(dataModels.size(), dataModels.size());
+            fireTableRowsUpdated(i, i);
             break;
          }
       }

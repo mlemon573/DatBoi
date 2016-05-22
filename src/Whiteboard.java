@@ -127,8 +127,8 @@ public class Whiteboard extends JFrame
       moveToFrontButton.addActionListener(e -> moveToFront());
       moveToBackButton.addActionListener(e -> moveToBack());
       removeShapeButton.addActionListener(e -> removeSelected());
-      menuNetworkStartServer.addActionListener(e -> canvas.startServer());
-      menuNetworkJoinServer.addActionListener(e -> canvas.startClient());
+      menuNetworkStartServer.addActionListener(e -> startServer());
+      menuNetworkJoinServer.addActionListener(e -> startClient());
       textBox.addKeyListener(new TextChangeListener());
       fontBox.addActionListener(e -> setSelectedFont());
       canvas.addMouseListener(new CanvasListener());
@@ -151,6 +151,33 @@ public class Whiteboard extends JFrame
    {
       canvas.removeSelected();
       dirty = true;
+   }
+
+   private void startServer()
+   {
+      canvas.startServer();
+   }
+
+   private void startClient()
+   {
+      canvas.startClient();
+      disableAllDaThings();
+   }
+
+   private void disableAllDaThings()
+   {
+      rectButton.setEnabled(false);
+      ovalButton.setEnabled(false);
+      lineButton.setEnabled(false);
+      textButton.setEnabled(false);
+      setColorButton.setEnabled(false);
+      textBox.setEnabled(false);
+      fontBox.setEnabled(false);
+      moveToFrontButton.setEnabled(false);
+      moveToBackButton.setEnabled(false);
+      removeShapeButton.setEnabled(false);
+      canvas.setEnabled(false);
+      tableContainer.setEnabled(false);
    }
 
    private void confirmExit()
@@ -325,7 +352,8 @@ public class Whiteboard extends JFrame
 
    private void textCheck()
    {
-      if (canvas.getSelected() == null || canvas.getSelected() instanceof DText)
+      if (!"Client".equals(canvas.getMode()) && (canvas.getSelected() == null
+            || canvas.getSelected() instanceof DText))
       {
          textBox.setEnabled(true);
          fontBox.setEnabled(true);
@@ -466,7 +494,7 @@ public class Whiteboard extends JFrame
       {
          clickedX = e.getX();
          clickedY = e.getY();
-         if (canvas.getSelected() != null)
+         if (canvas.getSelected() != null && !"Client".equals(canvas.getMode()))
          {
             Rectangle knob = canvas.findKnob(clickedX, clickedY);
             canvas.setSelectedKnob(knob);

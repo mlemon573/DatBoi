@@ -75,6 +75,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
+   public String getMode()
+   {
+      return mode;
+   }
+
    public void clear()
    {
       shapes.clear();
@@ -249,7 +254,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       for (DShape shape : shapes)
       {
          shape.draw(g);
-         if (shape.equals(selected)) {drawKnobs(g);}
+         if (shape.equals(selected) && !"Client".equals(mode)) {drawKnobs(g);}
       }
    }
 
@@ -308,9 +313,19 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       else if (cmdCode == 5)
       {
          setSelected(old);
-         removeSelected();
-         addShape(newModel);
-         selected.setID(old.getID());
+         Rectangle bounds = newModel.getBounds();
+         int x = (int) bounds.getX();
+         int y = (int) bounds.getY();
+         int width = (int) bounds.getWidth();
+         int height = (int) bounds.getHeight();
+         old.setBounds(x, y, width, height);
+         old.setColor(newModel.getColor());
+         DShapeModel oldModel = old.getModel();
+         if (oldModel instanceof DLineModel && newModel instanceof DLineModel)
+         {
+            ((DLineModel) oldModel).setInvertX(((DLineModel) newModel).getInvertX());
+            ((DLineModel) oldModel).setInvertY(((DLineModel) newModel).getInvertY());
+         }
       }
    }
 

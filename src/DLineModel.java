@@ -18,23 +18,23 @@ public class DLineModel extends DShapeModel
       invertY = !invertY;
    }
 
-   public void setInvertX(boolean invertX)
-   {
-      this.invertX = invertX;
-   }
-
-   public void setInvertY(boolean invertY)
-   {
-      this.invertY = invertY;
-   }
-
    public boolean getInvertX()
    {
       return invertX;
    }
 
+   public void setInvertX(boolean invertX)
+   {
+      this.invertX = invertX;
+   }
+
    public boolean getInvertY()
    {
       return invertY;
+   }
+
+   public void setInvertY(boolean invertY)
+   {
+      this.invertY = invertY;
    }
 }
