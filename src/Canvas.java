@@ -1,25 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
    static String default_port = "8001";
    static String default_host = "127.0.0.1";
-   String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
+   static String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
    private List<DShape> shapes;
    private DShape selected;
    private int sKnob;
    private int id;
    private DataTable dataTable;
-   private List<ObjectOutputStream> outputStreamList;
    private String mode;
    private Client client;
    private Server server;
@@ -35,7 +29,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       this.setOpaque(true);
       this.setBackground(Color.white);
       shapes = new ArrayList<>();
-      outputStreamList = new ArrayList<>();
       id = 1;
    }
 
@@ -52,7 +45,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       shape.setID(id++);
       selected = shape;
       repaint();
-      sendToAllRemotes(1, shape.getModel());
+      if (server != null) {server.sendToAllClients(1, shape.getModel());}
       dataTable.addNewRow(shape.getModel());
    }
 
@@ -67,7 +60,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       if (shapes.contains(selected))
       {
          shapes.remove(selected);
-         sendToAllRemotes(2, selected.getModel());
+         if (server != null) {server.sendToAllClients(2, selected.getModel());}
          dataTable.removeRow(selected.getModel());
          selected = null;
          repaint();
@@ -135,7 +128,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       DShape shape = shapes.remove(i);
       shapes.add(shape);
       repaint();
-      sendToAllRemotes(3, selected.getModel());
+      if (server != null) {server.sendToAllClients(3, selected.getModel());}
       dataTable.moveRowUp(selected.getModel());
    }
 
@@ -146,7 +139,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       DShape shape = shapes.remove(i);
       shapes.add(0, shape);
       repaint();
-      sendToAllRemotes(4, selected.getModel());
+      if (server != null) {server.sendToAllClients(4, selected.getModel());}
       dataTable.moveRowDown(selected.getModel());
    }
 
@@ -227,11 +220,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          if (selected.getClass().equals(DLine.class)) {((DLine) selected).invertY();}
       }
 
-      /*
-      System.out.printf("x: %d, %d, %d%n", dx, newX, newWidth);
-      System.out.printf("y: %d, %d, %d%n%n", dy, newY, newHeight);
-      */
-
       selected.setBounds(newX, newY, newWidth, newHeight);
    }
 
@@ -243,7 +231,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    @Override
    public void modelChanged(DShapeModel model)
    {
-      sendToAllRemotes(5, model);
+      if (server != null) {server.sendToAllClients(5, model);}
       dataTable.updateRow(model);
       repaint();
    }
@@ -284,92 +272,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
-   public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
-   {
-      DShape old = getShapeByID(newModel.getID());
-      if (cmdCode != 1 && old == null)
-      {
-         System.out.println("Sync Failed!");
-      }
-      else if (cmdCode == 1)
-      {
-         addShape(newModel);
-      }
-      else if (cmdCode == 2)
-      {
-         setSelected(old);
-         removeSelected();
-      }
-      else if (cmdCode == 3)
-      {
-         setSelected(old);
-         moveToFront();
-      }
-      else if (cmdCode == 4)
-      {
-         setSelected(old);
-         moveToBack();
-      }
-      else if (cmdCode == 5)
-      {
-         setSelected(old);
-         Rectangle bounds = newModel.getBounds();
-         int x = (int) bounds.getX();
-         int y = (int) bounds.getY();
-         int width = (int) bounds.getWidth();
-         int height = (int) bounds.getHeight();
-         old.setBounds(x, y, width, height);
-         old.setColor(newModel.getColor());
-         DShapeModel oldModel = old.getModel();
-         if (oldModel instanceof DLineModel && newModel instanceof DLineModel)
-         {
-            ((DLineModel) oldModel).setInvertX(((DLineModel) newModel).getInvertX());
-            ((DLineModel) oldModel).setInvertY(((DLineModel) newModel).getInvertY());
-         }
-      }
-   }
-
-   public synchronized void sendToAllRemotes(int cmdIndex, DShapeModel target)
-   {
-      if (!"Server".equals(mode)) {return;}
-      OutputStream output = new ByteArrayOutputStream();
-      XMLEncoder encoder = new XMLEncoder(output);
-      encoder.writeObject(target);
-      encoder.close();
-      String xmlString = output.toString();
-      Iterator<ObjectOutputStream> osIterator = outputStreamList.iterator();
-      while (osIterator.hasNext())
-      {
-         ObjectOutputStream out = osIterator.next();
-         try
-         {
-            out.writeObject(cmdList[cmdIndex]);
-            out.flush();
-            out.writeObject(xmlString);
-            out.flush();
-         }
-         catch (Exception e) {e.printStackTrace();}
-      }
-   }
-
-   public synchronized void sendAllToRemote(ObjectOutputStream out)
-   {
-      OutputStream output = new ByteArrayOutputStream();
-      XMLEncoder encoder = new XMLEncoder(output);
-      DShapeModel[] models = new DShapeModel[shapes.size()];
-      for (int i = 0; i < shapes.size(); i++) {models[i] = shapes.get(i).getModel();}
-      encoder.writeObject(models);
-      encoder.close();
-      String xmlString = output.toString();
-      try
-      {
-         out.writeObject(xmlString);
-         out.flush();
-      }
-      catch (Exception e) {e.printStackTrace();}
-   }
-
-   public void startServer()
+   void startServer()
    {
       mode = "Server";
       String result = JOptionPane.showInputDialog("Run server on port", default_port);
@@ -377,11 +280,12 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       {
          System.out.println("server: start");
          server = new Server(Integer.parseInt(result));
+         server.setCanvas(this);
          server.start();
       }
    }
 
-   public void startClient()
+   void startClient()
    {
       mode = "Client";
       String result = JOptionPane.showInputDialog("Connect to host:port",
@@ -391,83 +295,8 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          String[] res = result.split(":");
          System.out.println("client: start");
          client = new Client(res[0], Integer.parseInt(res[1]));
+         client.setCanvas(this);
          client.start();
-      }
-   }
-
-   private class Client extends Thread
-   {
-      private String host;
-      private int port;
-
-      private Client(String host, int port)
-      {
-         this.host = host;
-         this.port = port;
-      }
-
-      @Override
-      public void run()
-      {
-         try
-         {
-            Socket serverSocket = new Socket(host, port);
-            ObjectInputStream ois = new ObjectInputStream(serverSocket.getInputStream());
-            String objString = (String) ois.readObject();
-            ByteArrayInputStream ba = new ByteArrayInputStream(objString.getBytes());
-            XMLDecoder decoder = new XMLDecoder(ba);
-            DShapeModel[] models = (DShapeModel[]) decoder.readObject();
-            decoder.close();
-            for (DShapeModel model : models) {addShape(model);}
-
-            while (true)
-            {
-               try
-               {
-                  String cmd = (String) ois.readObject();
-                  objString = (String) ois.readObject();
-                  decoder =
-                        new XMLDecoder(new ByteArrayInputStream(objString.getBytes()));
-                  DShapeModel newModel = (DShapeModel) decoder.readObject();
-                  decoder.close();
-
-                  for (int i = 1; i < cmdList.length; i++)
-                  {if (cmd.equals(cmdList[i])) {applyServerUpdate(i, newModel);}}
-               }
-               catch (Exception ex) {ex.printStackTrace();}
-            }
-         }
-         catch (Exception e) {e.printStackTrace();}
-      }
-   }
-
-   private class Server extends Thread
-   {
-      private int port;
-
-      Server(int port)
-      {
-         this.port = port;
-      }
-
-      @Override
-      public void run()
-      {
-         try
-         {
-            ServerSocket server = new ServerSocket(port);
-
-            while (true)
-            {
-               Socket toClient = server.accept();
-               System.out.println("server: client connected");
-               ObjectOutputStream newOut =
-                     new ObjectOutputStream(toClient.getOutputStream());
-               sendAllToRemote(newOut);
-               outputStreamList.add(newOut);
-            }
-         }
-         catch (Exception e) {e.printStackTrace();}
       }
    }
 }
