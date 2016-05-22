@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
+   //static String default_port = "8001";
    static String default_port = "39587";
    static String default_host = "127.0.0.1";
    static String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
@@ -19,14 +20,18 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    private Server server;
 
    /**
-    * Constructors
+    * Constructor for Canvas. Carries a default size.
     */
-
    public Canvas()
    {
       this(400, 400);
    }
 
+   /**
+    * Constructor for Canvas.
+    * @param width - the height of the canvas.
+    * @param height - the width of the canvas,
+     */
    public Canvas(int width, int height)
    {
       this.setPreferredSize(new Dimension(width, height));
@@ -36,10 +41,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       id = 1;
    }
 
-   /**
-    * Drawing Stuff
-    */
-
+    /**
+     * Method to handle the painting of a specific graphic.
+     * @param g - the graphic to manipulate.
+     */
    public void paintComponent(Graphics g)
    {
       super.paintComponent(g);
@@ -50,6 +55,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
+   /**
+    * Draws the knobs with respect to a shape.
+    * @param g - the graphic to draw.
+     */
    public void drawKnobs(Graphics g)
    {
       if (selected != null)
@@ -70,10 +79,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
-   /**
-    * Networking stuff
-    */
 
+    /**
+     * Method to start the Server,
+     */
    void startServer()
    {
       String result = JOptionPane.showInputDialog("Run server on port", default_port);
@@ -87,6 +96,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
+   /**
+    * Method to start the Client Handling.
+    * @param whiteboard - the whiteboard to invoke.
+     */
    void startClient(Whiteboard whiteboard)
    {
       String result = JOptionPane.showInputDialog("Connect to host:port",
@@ -104,9 +117,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    }
 
    /**
-    * Find stuff
-    */
-
+    * Method to find a shape at a specific x and y coordinate.
+    * @param x - the x coordinate.
+    * @param y - the y coordinate.
+    * @return shapes.get(i) - the shape that is at a particular index.
+     */
    public DShape findShape(int x, int y)
    {
       for (int i = shapes.size() - 1; i >= 0; i--)
@@ -121,6 +136,12 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
+   /**
+    * Method to find the knob at a specific x and y coordinate.
+    * @param x - the x coordinate.
+    * @param y - the y coordinate.
+    * @return the knob that exists at the given coordinates or none.
+     */
    public Point findKnob(int x, int y)
    {
       for (Point knob : selected.getKnobs())
@@ -131,10 +152,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
-   /**
-    * Add shape
-    */
 
+    /**
+     * Adds a newly constructed shape to the canvas.
+     * @param shape - the shape to add to the canvas.
+     */
    public void addShape(DShape shape)
    {
       if (shape == null) {return;}
@@ -147,16 +169,19 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       dataTable.addNewRow(shape.getModel());
    }
 
+   /**
+    * Helper to add a shape to the canvas.
+    * @param model - the model to add.
+     */
    public void addShape(DShapeModel model)
    {
       if (model == null) {return;}
       addShape(DShape.getDShapeFromModel(model));
    }
-
+   
    /**
-    * Move to front / back
+    * Moves the shape to the highest layer of the shapes that share a bounds.
     */
-
    public void moveToFront()
    {
       int i = getSelectedIndex();
@@ -167,6 +192,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       dataTable.moveRowUp(selected.getModel());
    }
 
+   /**
+    * Moves the shape to the lowest layer of the shapes that share a bounds.
+    */
    public void moveToBack()
    {
       int i = getSelectedIndex();
@@ -178,9 +206,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    }
 
    /**
-    * Select knob
-    */
-
+    * Setter method to mark which knob has been selected.
+    * @param point - a point which represents a knob.
+     */
    public void setSelectedKnob(Point point)
    {
       List<Point> knobs = selected.getKnobs();
@@ -197,26 +225,38 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       if (!set) {setSelectedKnob(-1);}
    }
 
+   /**
+    * Setter method to mark which knob of a shape has been selecyed.
+    * @param i - the numerical value that represents a specific knob.
+     */
    private void setSelectedKnob(int i)
    {
       sKnob = i;
    }
 
    /**
-    * Selected getter / setter (and index)
-    */
-
+    * Getter method to return the currently selected shape.
+    * @return this.selected - the selected DShape.
+     */
    public DShape getSelected()
    {
       return this.selected;
    }
 
+   /**
+    * Setter method to mark the shape as selected.
+    * @param shape - the shape to set to selected.
+     */
    public void setSelected(DShape shape)
    {
       selected = shape;
       repaint();
    }
 
+   /**
+    * Getter method to find the selected shape's index.
+    * @return i - the index of the shape if it exists.
+     */
    public int getSelectedIndex()
    {
       for (int i = 0; i < shapes.size(); i++)
@@ -226,15 +266,22 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return -1;
    }
 
-   /**
-    * Move and Resize
-    */
 
+    /**
+     * Method to move the selected shape by a given amount,
+     * @param dx - the amount the x value has changed.
+     * @param dy - the amount the y value has changed.
+     */
    public void moveSelected(int dx, int dy)
    {
       if (selected != null) {selected.moveBy(dx, dy);}
    }
 
+   /**
+    * Method to set the bounds of a shape.
+    * @param dx - the amount the x value has changed.
+    * @param dy - the amount the y value has changed.
+     */
    public void resizeSelected(int dx, int dy)
    {
       Rectangle bounds = selected.getBounds();
@@ -282,14 +329,13 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          newHeight = -newHeight;
          if (selected.getClass().equals(DLine.class)) {((DLine) selected).invertY();}
       }
-
       selected.setBounds(newX, newY, newWidth, newHeight);
    }
 
    /**
-    * Remove
+    * Removes the selected shape and decrements the unique numerical value for the next shape.
+    * Sends this information to the clients.
     */
-
    public void removeSelected()
    {
       if (shapes.contains(selected))
@@ -303,6 +349,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
    }
 
+   /**
+    * Clears the shapes and repaints the canvas.
+    */
    public void clear()
    {
       shapes.clear();
@@ -311,24 +360,37 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    }
 
    /**
-    * Various getters and setters
+    * Setter method for the data table.
+    * @param dataTable - the data table to construct.
     */
-
    public void setDataTable(DataTable dataTable)
    {
       this.dataTable = dataTable;
    }
 
+   /**
+    * Getter method for the mode.
+    * @return mode - the mode property that a model has.
+     */
    public String getMode()
    {
       return mode;
    }
 
+   /**
+    * Getter method for a List<DShape>.
+    * @return shapes - a list of all shapes.
+     */
    public List<DShape> getShapesList()
    {
       return shapes;
    }
 
+   /**
+    * Getter method for a DShape.
+    * @param id - the unique numerical value of a shape.
+    * @return shape - the shape to return if it exists.
+     */
    public DShape getShapeByID(int id)
    {
       for (DShape shape : getShapesList()) {if (shape.getID() == id) {return shape;}}
@@ -336,9 +398,9 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    }
 
    /**
-    * Model change listener
-    */
-
+    * Method to listen for a change to the model.
+    * @param model - the model who has been changed.
+     */
    @Override
    public void modelChanged(DShapeModel model)
    {
