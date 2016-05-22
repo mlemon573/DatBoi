@@ -28,20 +28,14 @@ public class DataTable extends AbstractTableModel
     * @return dataModels.size - the total amount of objects that are on the screen.
      */
    @Override
-   public int getRowCount()
-   {
-      return dataModels.size();
-   }
+   public int getRowCount() { return dataModels.size(); }
 
-   /**]
+   /**
     * Overrides the getColumnCount method of the AbstractTableModel.
     * @return columnNames.length - the total amount of columns (a fixed value of 4).
      */
    @Override
-   public int getColumnCount()
-   {
-      return columnNames.length;
-   }
+   public int getColumnCount() { return columnNames.length; }
 
    /**
     * Overrides the getValueAt method of the AbstractTableModel.
