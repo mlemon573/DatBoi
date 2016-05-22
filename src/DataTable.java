@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 public class DataTable extends AbstractTableModel
         /**
-         * n. Create a subclass of AbstractTableModelthat responds to getValueAt() using the adapter pattern ­­ 
+         * Create a subclass of AbstractTableModelthat responds to getValueAt() using the adapter pattern ­­
          * pull the values dynamically out of the shape models. The table should show the shapes in the same order that the canvas has them,
-         * so the last shape in the canvas list will be the last row in the table. 
+         * so the last shape in the canvas list will be the last row in the table.
          * Adding and removing shapes should add and remove rows in the table. Moving and resizing shapes should change the analogous ints in the table.
          */
 {
@@ -72,6 +72,13 @@ public class DataTable extends AbstractTableModel
         fireTableDataChanged();
     }
 
+    /**
+     * The table model should register as a listener to every shape model, and so get modelChanged()notifications. 
+     * When a shape model changes, the table model should figure out the corresponding row in the table, and call 
+     * fireTableRowsUpdated(rowNum,rowNum) which re­draws a single row in the table. The code that adds and removes shapes 
+     * will need to send some sort of add/remove message to the table model so it can know to start or stop listening to that model
+     * @param shapeModel
+     */
     //This is for when an element is moved or resized.
     public void updateRow(DShapeModel shapeModel) {
         for(int i = 0; i < dataModels.size(); i++) {
