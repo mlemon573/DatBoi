@@ -1,15 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A frame that contains ways to alter and choose colors of the user's choice.
+ */
 public class ColorChooser
 {
+   //GUI elements
    private JPanel colorPanel;
    private JColorChooser colorChooser;
    private JButton confirmButton;
    private JButton cancelButton;
 
+   //The selected shape to change the color of on the canvas.
    private DShape selectedShape;
 
+   /**
+    * Constructor for the ColorChooser.
+    * @param selectedShape - the shape to change the color of.
+     */
    private ColorChooser(DShape selectedShape)
    {
       $$$setupUI$$$();
@@ -18,22 +27,33 @@ public class ColorChooser
       cancelButton.addActionListener(e -> close(colorPanel));
    }
 
+   /**
+    * Creates the frame of color chooser panel.
+    * @param selectedShape - the shape to change the color of.
+     */
    public static void createFrame(DShape selectedShape)
    {
       JFrame frame = new JFrame();
       frame.setContentPane(new ColorChooser(selectedShape).colorPanel);
       frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       frame.pack();
-      frame.setLocationRelativeTo(null);
+      frame.setLocationRelativeTo(null); //sets the Color Chooser to the middle of one's screen.
       frame.setVisible(true);
    }
 
+   /**
+    * Sets the color of the selected shape to the color that the user chose.
+    */
    private void saveColor()
    {
       selectedShape.getModel().setColor(colorChooser.getColor());
       close(colorPanel);
    }
 
+   /**
+    * Closes the color chooser frame.
+    * @param child - the color chooser frame. 
+     */
    private void close(JPanel child)
    {
       SwingUtilities.getWindowAncestor(child).dispose();
