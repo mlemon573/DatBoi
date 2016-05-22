@@ -2,16 +2,27 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to handle the drawing and manipulation of DLine.
+ */
 public class DLine extends DShape
 {
+   //DLine elements
    private boolean invertX = false;
    private boolean invertY = false;
 
+   /**
+    * Constructor for DLine.
+    */
    public DLine()
    {
       super.setModel(new DLineModel());
    }
 
+   /**
+    * Overrides the getKnobs method of the DShape class to work for a DLine.
+    * @return knobs - the knobs used for a DLine.
+     */
    @Override
    public List<Rectangle> getKnobs()
    {
@@ -33,6 +44,10 @@ public class DLine extends DShape
       return knobs;
    }
 
+   /**
+    * Method to draw the line with a a respective color, size, and position.
+    * @param g - the graphic to draw.
+     */
    public void draw(Graphics g)
    {
       this.invertX = ((DLineModel) this.getModel()).getInvertX();
@@ -45,11 +60,17 @@ public class DLine extends DShape
             !invertY ? getY() + getHeight() : getY());
    }
 
+   /**
+    * Inverts the model with respect to X coordinate.
+    */
    public void invertX()
    {
       ((DLineModel) this.getModel()).invertX();
    }
 
+   /**
+    * Inverts the model with respect to the Y coordinate.
+    */
    public void invertY()
    {
       ((DLineModel) this.getModel()).invertY();
