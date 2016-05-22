@@ -20,7 +20,7 @@ public class ClearDialog extends JDialog
    /**
     * Constructor for the Clear Dialog.
     *
-    * @param canvas    -  the canvas to be cleared of all elements.
+    * @param canvas    - the canvas to be cleared of all elements.
     * @param dataTable - the data table to be cleared of all elements.
     */
    public ClearDialog(Canvas canvas, DataTable dataTable)

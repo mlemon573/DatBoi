@@ -18,6 +18,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    private Client client;
    private Server server;
 
+   /**
+    * Constructors
+    */
+
    public Canvas()
    {
       this(400, 400);
@@ -32,119 +36,76 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       id = 1;
    }
 
-   public void setDataTable(DataTable dataTable)
-   {
-      this.dataTable = dataTable;
-   }
+   /**
+    * Drawing Stuff
+    */
 
-   public void addShape(DShape shape)
+   public void paintComponent(Graphics g)
    {
-      if (shape == null) {return;}
-      shapes.add(shape);
-      shape.addListener(this);
-      shape.setID(id++);
-      selected = shape;
-      repaint();
-      if (server != null) {server.sendToAllClients(1, shape.getModel());}
-      dataTable.addNewRow(shape.getModel());
-   }
-
-   public void addShape(DShapeModel model)
-   {
-      if (model == null) {return;}
-      addShape(DShape.getDShapeFromModel(model));
-   }
-
-   public void removeSelected()
-   {
-      if (shapes.contains(selected))
+      super.paintComponent(g);
+      for (DShape shape : shapes)
       {
-         shapes.remove(selected);
-         if (server != null) {server.sendToAllClients(2, selected.getModel());}
-         dataTable.removeRow(selected.getModel());
-         selected = null;
-         repaint();
-         id--;
+         shape.draw(g);
+         if (shape.equals(selected) && !"Client".equals(mode)) {drawKnobs(g);}
       }
    }
 
-   public String getMode()
+   public void drawKnobs(Graphics g)
    {
-      return mode;
-   }
-
-   public void clear()
-   {
-      shapes.clear();
-      selected = null;
-      repaint();
-   }
-
-   public DShape getSelected()
-   {
-      return this.selected;
-   }
-
-   public void setSelected(DShape shape)
-   {
-      selected = shape;
-      repaint();
-   }
-
-   public void setSelectedKnob(Point point)
-   {
-      List<Point> knobs = selected.getKnobs();
-      boolean set = false;
-      for (int i = 0; i < knobs.size(); i++)
+      if (selected != null)
       {
-         Point p = knobs.get(i);
-         if (p != null && p.equals(point))
+         for (Point p : selected.getKnobs())
          {
-            setSelectedKnob(i);
-            set = true;
+            if (p != null)
+            {
+               g.setColor(Color.WHITE);
+               g.fillRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
+                     .KNOB_SIZE);
+
+               g.setColor(Color.BLACK);
+               g.drawRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
+                     .KNOB_SIZE);
+            }
          }
       }
-      if (!set) {setSelectedKnob(-1);}
    }
 
-   private void setSelectedKnob(int i)
-   {
-      sKnob = i;
-   }
+   /**
+    * Networking stuff
+    */
 
-   public int getSelectedIndex()
+   void startServer()
    {
-      for (int i = 0; i < shapes.size(); i++)
+      String result = JOptionPane.showInputDialog("Run server on port", default_port);
+      if (result != null)
       {
-         if (shapes.get(i).equals(selected)) {return i;}
+         mode = "Server";
+         System.out.println("server: start");
+         server = new Server(Integer.parseInt(result));
+         server.setCanvas(this);
+         server.start();
       }
-      return -1;
    }
 
-   public void moveToFront()
+   void startClient(Whiteboard whiteboard)
    {
-      int i = getSelectedIndex();
-      if (i == -1) {return;}
-      shapes.add(shapes.remove(i));
-      repaint();
-      if (server != null) {server.sendToAllClients(3, selected.getModel());}
-      dataTable.moveRowUp(selected.getModel());
+      String result = JOptionPane.showInputDialog("Connect to host:port",
+            default_host + ":" + default_port);
+      if (result != null)
+      {
+         mode = "Client";
+         String[] res = result.split(":");
+         System.out.println("client: start");
+         client = new Client(res[0], Integer.parseInt(res[1]));
+         client.setCanvas(this);
+         client.start();
+         whiteboard.disableAllDaThings();
+      }
    }
 
-   public void moveToBack()
-   {
-      int i = getSelectedIndex();
-      if (i == -1) {return;}
-      shapes.add(0, shapes.remove(i));
-      repaint();
-      if (server != null) {server.sendToAllClients(4, selected.getModel());}
-      dataTable.moveRowDown(selected.getModel());
-   }
-
-   public List<DShape> getShapesList()
-   {
-      return shapes;
-   }
+   /**
+    * Find stuff
+    */
 
    public DShape findShape(int x, int y)
    {
@@ -168,6 +129,110 @@ public class Canvas extends JPanel implements ModelListener, Serializable
                && y >= knob.getY() && y <= knob.getY() + DShape.KNOB_SIZE) {return knob;}
       }
       return null;
+   }
+
+   /**
+    * Add shape
+    */
+
+   public void addShape(DShape shape)
+   {
+      if (shape == null) {return;}
+      shapes.add(shape);
+      shape.addListener(this);
+      shape.setID(id++);
+      selected = shape;
+      repaint();
+      if (server != null) {server.sendToAllClients(1, shape.getModel());}
+      dataTable.addNewRow(shape.getModel());
+   }
+
+   public void addShape(DShapeModel model)
+   {
+      if (model == null) {return;}
+      addShape(DShape.getDShapeFromModel(model));
+   }
+
+   /**
+    * Move to front / back
+    */
+
+   public void moveToFront()
+   {
+      int i = getSelectedIndex();
+      if (i == -1) {return;}
+      shapes.add(shapes.remove(i));
+      repaint();
+      if (server != null) {server.sendToAllClients(3, selected.getModel());}
+      dataTable.moveRowUp(selected.getModel());
+   }
+
+   public void moveToBack()
+   {
+      int i = getSelectedIndex();
+      if (i == -1) {return;}
+      shapes.add(0, shapes.remove(i));
+      repaint();
+      if (server != null) {server.sendToAllClients(4, selected.getModel());}
+      dataTable.moveRowDown(selected.getModel());
+   }
+
+   /**
+    * Select knob
+    */
+
+   public void setSelectedKnob(Point point)
+   {
+      List<Point> knobs = selected.getKnobs();
+      boolean set = false;
+      for (int i = 0; i < knobs.size(); i++)
+      {
+         Point p = knobs.get(i);
+         if (p != null && p.equals(point))
+         {
+            setSelectedKnob(i);
+            set = true;
+         }
+      }
+      if (!set) {setSelectedKnob(-1);}
+   }
+
+   private void setSelectedKnob(int i)
+   {
+      sKnob = i;
+   }
+
+   /**
+    * Selected getter / setter (and index)
+    */
+
+   public DShape getSelected()
+   {
+      return this.selected;
+   }
+
+   public void setSelected(DShape shape)
+   {
+      selected = shape;
+      repaint();
+   }
+
+   public int getSelectedIndex()
+   {
+      for (int i = 0; i < shapes.size(); i++)
+      {
+         if (shapes.get(i).equals(selected)) {return i;}
+      }
+      return -1;
+   }
+
+   /**
+    * Move and Resize
+    */
+
+   public void moveSelected(int dx, int dy)
+   {
+      if (selected != null) {selected.moveBy(dx, dy);}
    }
 
    public void resizeSelected(int dx, int dy)
@@ -221,47 +286,47 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       selected.setBounds(newX, newY, newWidth, newHeight);
    }
 
-   public void moveSelected(int dx, int dy)
+   /**
+    * Remove
+    */
+
+   public void removeSelected()
    {
-      if (selected != null) {selected.moveBy(dx, dy);}
+      if (shapes.contains(selected))
+      {
+         shapes.remove(selected);
+         if (server != null) {server.sendToAllClients(2, selected.getModel());}
+         dataTable.removeRow(selected.getModel());
+         selected = null;
+         repaint();
+         id--;
+      }
    }
 
-   @Override
-   public void modelChanged(DShapeModel model)
+   public void clear()
    {
-      if (server != null) {server.sendToAllClients(5, model);}
-      dataTable.updateRow(model);
+      shapes.clear();
+      selected = null;
       repaint();
    }
 
-   public void paintComponent(Graphics g)
+   /**
+    * Various getters and setters
+    */
+
+   public void setDataTable(DataTable dataTable)
    {
-      super.paintComponent(g);
-      for (DShape shape : shapes)
-      {
-         shape.draw(g);
-         if (shape.equals(selected) && !"Client".equals(mode)) {drawKnobs(g);}
-      }
+      this.dataTable = dataTable;
    }
 
-   public void drawKnobs(Graphics g)
+   public String getMode()
    {
-      if (selected != null)
-      {
-         for (Point p : selected.getKnobs())
-         {
-            if (p != null)
-            {
-               g.setColor(Color.WHITE);
-               g.fillRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
-                     .KNOB_SIZE);
+      return mode;
+   }
 
-               g.setColor(Color.BLACK);
-               g.drawRect((int) p.getX(), (int) p.getY(), DShape.KNOB_SIZE, DShape
-                     .KNOB_SIZE);
-            }
-         }
-      }
+   public List<DShape> getShapesList()
+   {
+      return shapes;
    }
 
    public DShape getShapeByID(int id)
@@ -270,32 +335,15 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       return null;
    }
 
-   void startServer()
-   {
-      String result = JOptionPane.showInputDialog("Run server on port", default_port);
-      if (result != null)
-      {
-         mode = "Server";
-         System.out.println("server: start");
-         server = new Server(Integer.parseInt(result));
-         server.setCanvas(this);
-         server.start();
-      }
-   }
+   /**
+    * Model change listener
+    */
 
-   void startClient(Whiteboard whiteboard)
+   @Override
+   public void modelChanged(DShapeModel model)
    {
-      String result = JOptionPane.showInputDialog("Connect to host:port",
-            default_host + ":" + default_port);
-      if (result != null)
-      {
-         mode = "Client";
-         String[] res = result.split(":");
-         System.out.println("client: start");
-         client = new Client(res[0], Integer.parseInt(res[1]));
-         client.setCanvas(this);
-         client.start();
-         whiteboard.disableAllDaThings();
-      }
+      if (server != null) {server.sendToAllClients(5, model);}
+      dataTable.updateRow(model);
+      repaint();
    }
 }

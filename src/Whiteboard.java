@@ -35,9 +35,8 @@ public class Whiteboard extends JFrame
    private JMenu menuFile;
    private JMenuItem menuFileNew;
    private JMenuItem menuFileOpen;
-   private JMenu menuFileSave;
-   private JMenuItem menuFileSavePng;
-   private JMenuItem menuFileSaveXml;
+   private JMenuItem menuFilePng;
+   private JMenuItem menuFileXml;
    private JMenuItem menuFileExit;
    private JMenu menuNetwork;
    private JMenuItem menuNetworkStartServer;
@@ -76,27 +75,26 @@ public class Whiteboard extends JFrame
       menuFile = new JMenu("File");
       menuFile.setMnemonic('f');
       menuFileNew = new JMenuItem("New");
-      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+      menuFileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent
+            .CTRL_MASK));
       menuFileNew.setMnemonic('n');
       menuFileOpen = new JMenuItem("Open");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent
+            .CTRL_MASK));
       menuFileOpen.setMnemonic('o');
-      menuFileSave = new JMenu("Save");
-      menuFileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-      menuFileSave.setMnemonic('s');
-      menuFileSavePng = new JMenuItem("PNG");
-      menuFileSavePng.setMnemonic('p');
-      menuFileSaveXml = new JMenuItem("XML");
-      menuFileSaveXml.setMnemonic('x');
-      menuFileSave.add(menuFileSavePng);
-      menuFileSave.add(menuFileSaveXml);
+      menuFilePng = new JMenuItem("Export as PNG");
+      menuFilePng.setMnemonic('p');
+      menuFileXml = new JMenuItem("Save as XML");
+      menuFileXml.setMnemonic('x');
       menuFileExit = new JMenuItem("Exit");
-      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+      menuFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent
+            .CTRL_MASK));
       menuFileExit.setMnemonic('e');
       menuFile.add(menuFileNew);
       menuFile.add(menuFileOpen);
       menuFile.addSeparator();
-      menuFile.add(menuFileSave);
+      menuFile.add(menuFilePng);
+      menuFile.add(menuFileXml);
       menuFile.addSeparator();
       menuFile.add(menuFileExit);
       menuBar.add(menuFile);
@@ -104,10 +102,12 @@ public class Whiteboard extends JFrame
       menuNetwork = new JMenu("Network");
       menuNetwork.setMnemonic('n');
       menuNetworkStartServer = new JMenuItem("Start Server");
-      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
+      menuNetworkStartServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
+            InputEvent.CTRL_MASK));
       menuNetworkStartServer.setMnemonic('t');
       menuNetworkJoinServer = new JMenuItem("Join Server");
-      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+      menuNetworkJoinServer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+            InputEvent.CTRL_MASK));
       menuNetworkJoinServer.setMnemonic('c');
       menuNetwork.add(menuNetworkStartServer);
       menuNetwork.add(menuNetworkJoinServer);
@@ -126,8 +126,8 @@ public class Whiteboard extends JFrame
       moveToFrontButton.addActionListener(e -> moveToFront());
       moveToBackButton.addActionListener(e -> moveToBack());
       removeShapeButton.addActionListener(e -> removeSelected());
-      menuFileSavePng.addActionListener(e -> savePng());
-      menuFileSaveXml.addActionListener(e -> saveXml());
+      menuFilePng.addActionListener(e -> savePng());
+      menuFileXml.addActionListener(e -> saveXml());
       menuFileOpen.addActionListener(e -> openFile());
       menuFileNew.addActionListener(e -> clearCanvas());
       menuFileExit.addActionListener(e -> confirmExit());
@@ -179,7 +179,7 @@ public class Whiteboard extends JFrame
 
    private void confirmExit()
    {
-      ExitDialog dialog = new ExitDialog(this, dirty, canvas.getMode());
+      ExitDialog dialog = new ExitDialog(dirty, canvas.getMode());
       dialog.pack();
       dialog.setLocationRelativeTo(null);
       dialog.setVisible(true);
@@ -266,10 +266,7 @@ public class Whiteboard extends JFrame
             imageFile.createNewFile();
             ImageIO.write(image, "png", imageFile);
          }
-         catch (Exception ex)
-         {
-            System.out.println("File cannot be saved.");
-         }
+         catch (Exception ex) {System.out.println("File cannot be saved.");}
          fileChooser.setEnabled(false);
       }
    }
@@ -282,25 +279,18 @@ public class Whiteboard extends JFrame
       if (openState == JFileChooser.APPROVE_OPTION)
       {
          File fileToOpen = fileChooser.getSelectedFile().getAbsoluteFile();
-         if (fileToOpen != null)
+         try
          {
-            try
-            {
-               XMLDecoder xmlIn =
-                     new XMLDecoder(new BufferedInputStream(new FileInputStream(fileToOpen)));
-               DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
-               xmlIn.close();
-               canvas.clear();
-               for (DShapeModel model : models)
-               {
-                  canvas.addShape(model);
-               }
-            }
-            catch (Exception e)
-            {
-               System.out.println("File cannot be opened.");
-            }
+            XMLDecoder xmlIn =
+                  new XMLDecoder(new BufferedInputStream(new FileInputStream
+                        (fileToOpen)));
+            DShapeModel[] models = (DShapeModel[]) xmlIn.readObject();
+            xmlIn.close();
+            canvas.clear();
+            for (DShapeModel model : models) {canvas.addShape(model);}
+            dirty = true;
          }
+         catch (Exception e) {System.out.println("File cannot be opened.");}
          fileChooser.setEnabled(false);
       }
    }
