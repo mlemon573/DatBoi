@@ -25,6 +25,7 @@ public class Whiteboard extends JFrame {
 	private JButton setColorButton;
 	private JTextField textBox;
 	private JComboBox<String> fontBox;
+	private static final String[] FONTS = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 	private JButton moveToFrontButton;
 	private JButton moveToBackButton;
 	private JButton removeShapeButton;
@@ -281,7 +282,16 @@ public class Whiteboard extends JFrame {
 			textBox.setEnabled(false);
 			fontBox.setEnabled(false);
 		}
-		repaint();
+		if (canvas.getSelected() instanceof DText) {
+			DText text = (DText) canvas.getSelected();
+			textBox.setText(text.getText());
+			for (int i = 1; i < FONTS.length; i++) {
+				if (text.getFont().equals(FONTS[i])) {
+					fontBox.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -347,9 +357,11 @@ public class Whiteboard extends JFrame {
 		textBox.setPreferredSize(new Dimension(150, 31));
 		textBox.setText("Hello");
 		fontBox = new JComboBox<>();
-		fontBox.addItem("Dialogue");
-		for (String font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-			fontBox.addItem(font);
+		for (int i = 0; i < FONTS.length; i++) {
+			fontBox.addItem(FONTS[i]);
+			if (FONTS[i].equals("Dialog")) {
+				fontBox.setSelectedIndex(i);
+			}
 		}
 		panel5.add(textBox);
 		panel5.add(fontBox);
