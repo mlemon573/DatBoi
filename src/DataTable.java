@@ -51,7 +51,7 @@ public class DataTable extends AbstractTableModel
          case 3:
             return dataModels.get(selectedShape).getHeight();
          case 4:
-             return dataModels.get(selectedShape).getID();
+            return dataModels.get(selectedShape).getID();
       }
       return null;
    }
@@ -115,6 +115,7 @@ public class DataTable extends AbstractTableModel
       {
          if (dataModels.get(i).getID() == shapeToRemove.getID())
          {
+            /*
             for (DShapeModel model : dataModels)
             {
                if (model.getID() > shapeToRemove.getID())
@@ -122,6 +123,7 @@ public class DataTable extends AbstractTableModel
                   model.setID(model.getID() - 1);
                }
             }
+            */
             dataModels.remove(i);
             break;
          }

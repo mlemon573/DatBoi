@@ -289,8 +289,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    public synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
    {
       DShape old = getShapeByID(newModel.getID());
-      if (old != null) {System.out.println("Old: " + old.getID());}
-      System.out.println("New: " + newModel.getID());
       if (cmdCode != 1 && old == null)
       {
          System.out.println("Sync Failed!");
@@ -316,16 +314,11 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       }
       else if (cmdCode == 5)
       {
-         System.out.println("old: " + old);
          setSelected(old);
-         System.out.println("selected b4: " + selected);
          removeSelected();
          addShape(newModel);
-         System.out.println("selected a4: " + selected);
          selected.setID(old.getID());
       }
-      if (selected != null) {System.out.println("Selected: " + selected.getID());}
-      System.out.println("New2: " + newModel.getID());
    }
 
    public synchronized void sendToAllRemotes(int cmdIndex, DShapeModel target)
