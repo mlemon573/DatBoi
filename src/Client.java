@@ -100,6 +100,11 @@ class Client extends Thread
             ((DLineModel) oldModel).setInvertX(((DLineModel) newModel).getInvertX());
             ((DLineModel) oldModel).setInvertY(((DLineModel) newModel).getInvertY());
          }
+         if (oldModel instanceof DTextModel && newModel instanceof DTextModel)
+         {
+            ((DTextModel) oldModel).setText(((DTextModel) newModel).getText());
+            ((DTextModel) oldModel).setFont(((DTextModel) newModel).getFont());
+         }
       }
    }
 }

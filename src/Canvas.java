@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Canvas extends JPanel implements ModelListener, Serializable
 {
-   static String default_port = "8001";
+   static String default_port = "39587";
    static String default_host = "127.0.0.1";
    static String[] cmdList = new String[]{"", "Add", "Remove", "Front", "Back", "Change"};
    private List<DShape> shapes;
@@ -125,8 +125,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       int i = getSelectedIndex();
       if (i == -1) {return;}
-      DShape shape = shapes.remove(i);
-      shapes.add(shape);
+      shapes.add(shapes.remove(i));
       repaint();
       if (server != null) {server.sendToAllClients(3, selected.getModel());}
       dataTable.moveRowUp(selected.getModel());
@@ -136,8 +135,7 @@ public class Canvas extends JPanel implements ModelListener, Serializable
    {
       int i = getSelectedIndex();
       if (i == -1) {return;}
-      DShape shape = shapes.remove(i);
-      shapes.add(0, shape);
+      shapes.add(0, shapes.remove(i));
       repaint();
       if (server != null) {server.sendToAllClients(4, selected.getModel());}
       dataTable.moveRowDown(selected.getModel());
