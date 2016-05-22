@@ -228,25 +228,18 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       */
 
       selected.setBounds(newX, newY, newWidth, newHeight);
-      repaint();
-      sendToAllRemotes(5, selected.getModel());
-      dataTable.updateRow(selected.getModel());
    }
 
    public void moveSelected(int dx, int dy)
    {
-      if (selected != null)
-      {
-         selected.moveBy(dx, dy);
-         repaint();
-         sendToAllRemotes(5, selected.getModel());
-         dataTable.updateRow(selected.getModel());
-      }
+      if (selected != null) {selected.moveBy(dx, dy);}
    }
 
    @Override
    public void modelChanged(DShapeModel model)
    {
+      sendToAllRemotes(5, model);
+      dataTable.updateRow(model);
       repaint();
    }
 
@@ -326,7 +319,6 @@ public class Canvas extends JPanel implements ModelListener, Serializable
       if (!"Server".equals(mode)) {return;}
       OutputStream output = new ByteArrayOutputStream();
       XMLEncoder encoder = new XMLEncoder(output);
-
       encoder.writeObject(target);
       encoder.close();
       String xmlString = output.toString();
