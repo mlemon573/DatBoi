@@ -226,8 +226,10 @@ public class Canvas extends JPanel implements ModelListener, Serializable
          if (selected.getClass().equals(DLine.class)) {((DLine) selected).invertY();}
       }
 
+      /*
       System.out.printf("x: %d, %d, %d%n", dx, newX, newWidth);
       System.out.printf("y: %d, %d, %d%n%n", dy, newY, newHeight);
+      */
 
       selected.setBounds(newX, newY, newWidth, newHeight);
       repaint();
