@@ -4,8 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * A dialog screen for controlling whether or not the Canvas is cleared of all contents.
+ */
 public class ClearDialog extends JDialog
 {
+   //GUI elements.
    private JPanel contentPane;
    private JButton buttonOK;
    private JButton buttonCancel;
@@ -13,6 +17,11 @@ public class ClearDialog extends JDialog
    private Canvas canvas;
    private DataTable dataTable;
 
+   /**
+    * Constructor for the Clear Dialog.
+    * @param canvas -  the canvas to be cleared of all elements.
+    * @param dataTable - the data table to be cleared of all elements.
+     */
    public ClearDialog(Canvas canvas, DataTable dataTable)
    {
       $$$setupUI$$$();
@@ -21,7 +30,7 @@ public class ClearDialog extends JDialog
 
       setTitle("Clear Screen");
       setContentPane(contentPane);
-      setModal(true);
+      setModal(true); //Can't click behind the Clear Dialog frame.
       getRootPane().setDefaultButton(buttonOK);
 
       buttonOK.addActionListener(e -> onOK());
@@ -37,6 +46,9 @@ public class ClearDialog extends JDialog
 
    }
 
+   /**
+    * Clears the canvas, resets the data table of all elements.
+    */
    private void onOK()
    {
       canvas.clear();
@@ -45,6 +57,9 @@ public class ClearDialog extends JDialog
       dispose();
    }
 
+   /**
+    * Closes the clear dialog frame.
+    */
    private void onCancel()
    {
       dispose();
