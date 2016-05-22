@@ -4,24 +4,39 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
+/**
+ * Class that handles takes in information from the server and displays it.
+ */
 class Client extends Thread
 {
+   //Client elements.
    private Canvas canvas;
-
    private String host;
    private int port;
 
+   /**
+    * Constructor for the Client.
+    * @param host - the host to connection to.
+    * @param port - the port on which we are connection.
+     */
    public Client(String host, int port)
    {
       this.host = host;
       this.port = port;
    }
 
+   /**
+    * Setter method for the Canvas.
+    * @param canvas - the canvas to initialize.
+     */
    public void setCanvas(Canvas canvas)
    {
       this.canvas = canvas;
    }
 
+   /**
+    * Runs the client by reading in and displaying data through a stream.
+    */
    @Override
    public void run()
    {
@@ -58,6 +73,11 @@ class Client extends Thread
       catch (Exception e) {e.printStackTrace();}
    }
 
+   /**
+    * Applies updates that are read in from the server.
+    * @param cmdCode - the type of change that has occurred.
+    * @param newModel - the new shape model that has been resulted.
+     */
    private synchronized void applyServerUpdate(int cmdCode, DShapeModel newModel)
    {
       DShape old = canvas.getShapeByID(newModel.getID());
@@ -65,26 +85,26 @@ class Client extends Thread
       {
          System.out.println("Sync Failed!");
       }
-      else if (cmdCode == 1)
+      else if (cmdCode == 1) //A shape has been added on the server.
       {
-         canvas.addShape(newModel);
+         canvas.addShape(newModel); //Display in client.
       }
-      else if (cmdCode == 2)
+      else if (cmdCode == 2) //A shape has been removed on the server.
+      {
+         canvas.setSelected(old); 
+         canvas.removeSelected(); //Display in client.
+      }
+      else if (cmdCode == 3) //A shape has been moved to the front.
+      {
+         canvas.setSelected(old); 
+         canvas.moveToFront(); //Display in client.
+      }
+      else if (cmdCode == 4) //A shape has been moved to the back.
       {
          canvas.setSelected(old);
-         canvas.removeSelected();
+         canvas.moveToBack(); //Display in client.
       }
-      else if (cmdCode == 3)
-      {
-         canvas.setSelected(old);
-         canvas.moveToFront();
-      }
-      else if (cmdCode == 4)
-      {
-         canvas.setSelected(old);
-         canvas.moveToBack();
-      }
-      else if (cmdCode == 5)
+      else if (cmdCode == 5) //A shape has been moved, resized, or had its' color change.
       {
          canvas.setSelected(old);
          Rectangle bounds = newModel.getBounds();
