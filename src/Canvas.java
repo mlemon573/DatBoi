@@ -415,14 +415,19 @@ public class Canvas extends JPanel implements ModelListener, Serializable
 
             while (true)
             {
-               String cmd = (String) ois.readObject();
-               objString = (String) ois.readObject();
-               decoder = new XMLDecoder(new ByteArrayInputStream(objString.getBytes()));
-               DShapeModel newModel = (DShapeModel) decoder.readObject();
-               decoder.close();
+               try
+               {
+                  String cmd = (String) ois.readObject();
+                  objString = (String) ois.readObject();
+                  decoder =
+                        new XMLDecoder(new ByteArrayInputStream(objString.getBytes()));
+                  DShapeModel newModel = (DShapeModel) decoder.readObject();
+                  decoder.close();
 
-               for (int i = 1; i < cmdList.length; i++)
-               {if (cmd.equals(cmdList[i])) {applyServerUpdate(i, newModel);}}
+                  for (int i = 1; i < cmdList.length; i++)
+                  {if (cmd.equals(cmdList[i])) {applyServerUpdate(i, newModel);}}
+               }
+               catch (Exception ex) {ex.printStackTrace();}
             }
          }
          catch (Exception e) {e.printStackTrace();}

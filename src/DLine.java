@@ -15,6 +15,8 @@ public class DLine extends DShape
    @Override
    public List<Rectangle> getKnobs()
    {
+      this.invertX = ((DLineModel) this.getModel()).getInvertX();
+      this.invertY = ((DLineModel) this.getModel()).getInvertY();
       int baseX = getX() - (KNOB_SIZE / 2);
       int baseY = getY() - (KNOB_SIZE / 2);
       int width = getWidth();
@@ -33,6 +35,8 @@ public class DLine extends DShape
 
    public void draw(Graphics g)
    {
+      this.invertX = ((DLineModel) this.getModel()).getInvertX();
+      this.invertY = ((DLineModel) this.getModel()).getInvertY();
       g.setColor(this.getColor());
       g.drawLine(
             !invertX ? getX() : getX() + getWidth(),
@@ -43,11 +47,11 @@ public class DLine extends DShape
 
    public void invertX()
    {
-      invertX = !invertX;
+      ((DLineModel) this.getModel()).invertX();
    }
 
    public void invertY()
    {
-      invertY = !invertY;
+      ((DLineModel) this.getModel()).invertY();
    }
 }
